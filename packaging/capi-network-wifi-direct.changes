@@ -1,0 +1,3 @@
+* Wed May 29 2013 Anas Nashif <anas.nashif@intel.com> accepted/tizen/20130520.100855@afb2ebe
+- Fixed build and remove hardcoding of libdir
+
