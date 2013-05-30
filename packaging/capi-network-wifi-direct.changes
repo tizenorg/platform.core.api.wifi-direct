@@ -1,3 +1,6 @@
+* Thu May 30 2013 Baptiste DURAND <baptiste.durand@eurogiciel.fr> accepted/tizen/20130529.180805@21ad47f
+- Fix hardcoded path in pc file
+
 * Wed May 29 2013 Anas Nashif <anas.nashif@intel.com> accepted/tizen/20130520.100855@afb2ebe
 - Fixed build and remove hardcoding of libdir
 
