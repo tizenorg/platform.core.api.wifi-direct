@@ -1,0 +1,8 @@
+Change-Id: I21ad47fd89458344b6f4979fb66b38e610ac46f6
+Code-Review+2: Anas Nashif
+Verified+1: Baptiste DURAND <baptiste.durand@eurogiciel.fr>
+Submitted-by: Anas Nashif
+Submitted-at: Thu, 30 May 2013 06:06:45 -0700
+Reviewed-on: https://review.tizen.org/gerrit/3772
+Project: platform/core/api/wifi-direct
+Branch: refs/heads/tizen
