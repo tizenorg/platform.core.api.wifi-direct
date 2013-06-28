@@ -5,6 +5,7 @@ Release:    3
 Group:      API/C API
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
+Source1001: 	capi-network-wifi-direct.manifest
 BuildRequires:  pkgconfig(dbus-glib-1)
 BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(vconf)
@@ -24,6 +25,7 @@ WiFi-Direct library (Shared Library) (Developement)
 
 %prep
 %setup -q
+cp %{SOURCE1001} .
 
 %build
 %cmake . 
@@ -37,9 +39,10 @@ make %{?jobs:-j%jobs}
 %postun -p /sbin/ldconfig
 
 %files
-%manifest capi-network-wifi-direct.manifest
+%manifest %{name}.manifest
 
 %files devel
+%manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_libdir}/pkgconfig/*.pc
 %{_includedir}/*/*.h
