@@ -1,0 +1,8 @@
+Change-Id: I6b4dc140b3c126667d75fb577ccf6bcbbe184244
+Code-Review+2: Ryan Ware <ware@linux.intel.com>
+Verified+1: Ryan Ware <ware@linux.intel.com>
+Submitted-by: Ryan Ware <ware@linux.intel.com>
+Submitted-at: Mon, 08 Jul 2013 10:08:07 -0700
+Reviewed-on: https://review.tizen.org/gerrit/4434
+Project: platform/core/api/wifi-direct
+Branch: refs/heads/tizen
