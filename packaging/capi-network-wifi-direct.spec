@@ -1,49 +1,100 @@
 Name:       capi-network-wifi-direct
 Summary:    Network WiFi-Direct library in Tizen CAPI
-Version:    0.0.4
-Release:    3
-Group:      API/C API
+Version:    1.2.33
+Release:    1
+Group:      Network & Connectivity/Wireless
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
-Source1001: 	capi-network-wifi-direct.manifest
-BuildRequires:  pkgconfig(dbus-glib-1)
+Requires(post): /sbin/ldconfig
+Requires(postun): /sbin/ldconfig
+BuildRequires:  pkgconfig(gio-2.0)
 BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(vconf)
 BuildRequires:  pkgconfig(capi-base-common)
+BuildRequires:  pkgconfig(capi-system-info)
 BuildRequires:  cmake
+BuildRequires:  gettext-devel
 
 %description
-WiFi-Direct library (Shared Library)
+wifi direct library (Shared Library)
 
-%package devel 
-Summary:    WiFi-Direct library (Shared Library) (Developement)
-Group:      Development/API
+%package devel
+Summary:    Wifi Direct Library (Shared Library) (Development)
+Group:      Development/Libraries
+Requires:   %{name} = %{version}-%{release}
 Requires: capi-base-common-devel
-BuildRequires:  pkgconfig(wifi-direct)
 %description devel
-WiFi-Direct library (Shared Library) (Developement)
+wifi direct library (Shared Library) (Development)
+
+%description
+
+%package -n test-wifi-direct
+Summary:    Test Application for Wi-Fi Direct
+Group:      TO_BE_FILLED
+Requires:   %{name} = %{version}-%{release}
+
+%description -n test-wifi-direct
+Test Application for Wi-Fi Direct
 
 %prep
 %setup -q
-cp %{SOURCE1001} .
+
+%ifarch %{arm}
+export ARCH=arm
+%else
+export ARCH=i586
+%endif
 
 %build
-%cmake . 
-make %{?jobs:-j%jobs}
 
+export CFLAGS="$CFLAGS -DTIZEN_DEBUG_ENABLE"
+export CXXFLAGS="$CXXFLAGS -DTIZEN_DEBUG_ENABLE"
+export FFLAGS="$FFLAGS -DTIZEN_DEBUG_ENABLE"
+
+cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} \
+%if "%{?tizen_profile_name}" == "wearable"
+	-DTIZEN_FEATURE_SERVICE_DISCOVERY=0 \
+	-DTIZEN_FEATURE_WIFI_DISPLAY=0 \
+%else
+%if "%{?tizen_profile_name}" == "mobile"
+	-DTIZEN_FEATURE_SERVICE_DISCOVERY=1 \
+	-DTIZEN_FEATURE_WIFI_DISPLAY=1 \
+%else
+%if "%{?tizen_profile_name}" == "tv"
+	-DTIZEN_TV=1 \
+%endif
+%endif
+%endif
+	.
+
+make %{?jobs:-j%jobs}
 %install
+rm -rf %{buildroot}
 %make_install
+#%__strip %{buildroot}%{_libdir}/libwifi-direct.so.0.0
+
+mkdir -p %{buildroot}/usr/share/license
+cp %{_builddir}/%{buildsubdir}/LICENSE.APLv2 %{buildroot}/usr/share/license/%{name}
 
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
+
 %files
-%manifest %{name}.manifest
+%manifest capi-network-wifi-direct.manifest
+%defattr(-,root,root,-)
+%{_libdir}/libwifi-direct.so
+%{_libdir}/libwifi-direct.so.0
+%{_libdir}/libwifi-direct.so.0.0
+/usr/share/license/%{name}
 
 %files devel
-%manifest %{name}.manifest
 %defattr(-,root,root,-)
-%{_libdir}/pkgconfig/*.pc
-%{_includedir}/*/*.h
+%{_libdir}/pkgconfig/capi-network-wifi-direct.pc
+%{_includedir}/wifi-direct/wifi-direct.h
 
+%files -n test-wifi-direct
+%manifest test-wifi-direct.manifest
+%defattr(4755,app,app,4755)
+%{_bindir}/test-wifi-direct
