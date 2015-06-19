@@ -229,6 +229,18 @@ typedef enum {
 } wifi_direct_service_type_e;
 
 /**
+* @brief Enumeration for Wi-Fi Display device type.
+* @since_tizen 2.4
+*/
+typedef enum {
+	WIFI_DIRECT_DISPLAY_TYPE_SOURCE, /**< Configure as WFD Source*/
+	WIFI_DIRECT_DISPLAY_TYPE_PRISINK, /**< Configure as WFD Primary Sink */
+	WIFI_DIRECT_DISPLAY_TYPE_SECSINK, /**< Configure as WFD Secondary Sink */
+	WIFI_DIRECT_DISPLAY_TYPE_DUAL, /**< Configure as WFD Dual Role */
+	WIFI_DIRECT_DISPLAY_TYPE_MAX,
+} wifi_direct_display_type_e;
+
+/**
  * @brief Enumeration for Wi-Fi Direct service Discovery state.
  * @since_tizen 2.3
 */
@@ -253,6 +265,7 @@ typedef enum {
 /**
  * @brief Wi-Fi Direct buffer structure to store result of peer discovery.
  * @since_tizen 2.3
+ * @remarks You can use APIs for wifi-direct display function instead of is_miracast_device value which is deprecated since 2.4.
  */
 typedef struct
 {
@@ -278,6 +291,7 @@ typedef struct
 /**
  * @brief Wi-Fi Direct buffer structure to store information of connected peer.
  * @since_tizen 2.3
+ * @remarks You can use APIs for wifi-direct display function instead of is_miracast_device value which is deprecated since 2.4.
  */
 typedef struct
 {
@@ -290,7 +304,7 @@ typedef struct
 	wifi_direct_primary_device_type_e primary_device_type;  /**< Primary category of device */
 	wifi_direct_secondary_device_type_e secondary_device_type;  /**< Sub category of device */
 	unsigned int service_count;  /**< The number of Registered services */
-	char **service_list;  /**< Is a wifi display device */
+	char **service_list;  /**< The list of registered services */
 	bool is_miracast_device;  /**< Is a wifi display device */
 } wifi_direct_connected_peer_info_s;
 
@@ -413,7 +427,6 @@ typedef void (*wifi_direct_service_state_changed_cb) (int error_code,
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
- * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @see wifi_direct_deinitialize()
  */
 int wifi_direct_initialize(void);
@@ -426,7 +439,6 @@ int wifi_direct_initialize(void);
  * @return 0 on success, otherwise a negative error value.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
- * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
  * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
@@ -624,7 +636,7 @@ int wifi_direct_set_service_state_changed_cb(wifi_direct_service_state_changed_c
  * @see wifi_direct_initialize()
  * @see wifi_direct_set_service_state_changed_cb()
  */
-int wifi_direct_unset_service_state_changed_cb();
+int wifi_direct_unset_service_state_changed_cb(void);
 
 /**
  * @brief Activates the Wi-Fi Direct service, asynchronous.
@@ -813,7 +825,7 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb callback
  * @see wifi_direct_disconnect_all()
  * @see wifi_direct_connection_state_changed_cb()
  */
-int wifi_direct_connect(const char *mac_address);
+int wifi_direct_connect(char *mac_address);
 
 /**
  * @brief Cancels the connection now in progress.
@@ -890,7 +902,7 @@ int wifi_direct_disconnect_all(void);
  * @see wifi_direct_disconnect()
  * @see wifi_direct_connection_state_changed_cb()
  */
-int wifi_direct_disconnect(const char *mac_address);
+int wifi_direct_disconnect(char *mac_address);
 
 /**
  * @brief Called repeatedly when you get the information of connected peers.
@@ -1062,22 +1074,6 @@ int wifi_direct_set_device_name(const char *device_name);
  * @see wifi_direct_set_device_name()
  */
 int wifi_direct_get_device_name(char** device_name);
-
-/**
- * @brief Sets SSID(Service Set Identifier) of local device - DEPRECATED.
- * @param[in] ssid  The SSID
- * @return 0 on success, otherwise a negative error value.
- * @retval #WIFI_DIRECT_ERROR_NONE  Successful
- * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
- * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
- * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
- * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
- * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
- * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
- * @see wifi_direct_initialize()
- */
-int wifi_direct_set_ssid(const char* ssid);
 
 /**
  * @brief Gets SSID(Service Set Identifier) of a local device.
@@ -1602,6 +1598,52 @@ int wifi_direct_set_max_clients(int max);
  */
 int wifi_direct_get_max_clients(int *max);
 
+/**
+ * @brief Sets or updates Wi-Fi Protected Access (WPA) password. When creating Wi-Fi Direct Group, this password will be used.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @param passphrase  new wpa password to set. Application must set the new password before.
+ * @remarks a peer can connect to this group as Wi-Fi Infrastructured mode with a passphrase.
+ * @return 0 on success, otherwise a negative error value.
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitteddfasf
+ * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
+ * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+ * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+ * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
+ * @see wifi_direct_initialize()
+ * @see wifi_direct_activate()
+ * @see wifi_direct_get_passphrase()
+ */
+int wifi_direct_set_passphrase(const char *passphrase);
+
+/**
+ * @brief Gets the Wi-Fi Protected Access (WPA) password when creating Wi-Fi Direct Group.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @param[out] passphrase  Pointer to store wpa password. Application must free this memory.
+ * @return 0 on success, otherwise a negative error value.
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+ * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
+ * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+ * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+ * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
+ * @see wifi_direct_initialize()
+ * @see wifi_direct_activate()
+ * @see wifi_direct_set_passphrase()
+ */
+int wifi_direct_get_passphrase(char **passphrase);
 
 /**
  * @brief Gets the operating channel.
@@ -1655,24 +1697,28 @@ int wifi_direct_set_autoconnection_mode(bool mode);
  */
 int wifi_direct_is_autoconnection_mode(bool *mode);
 
-
 /**
- * @brief Gets the own group channel.
- * @param[out] channel The own group channel
- * @return 0 on success, otherwise a negative error value.
+ * @brief Allows a device to connect automatically.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @param[in] mac_address  Device MAC address to allow autoconnection
+ * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
- * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+ * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
  * @see wifi_direct_initialize()
+ * @see wifi_direct_activate()
  */
-int wifi_direct_get_own_group_channel(int* channel);
 
+int wifi_direct_set_autoconnection_peer(char *mac_address);
 
 /**
  * @brief Enables the persistent group.
@@ -1894,7 +1940,7 @@ int wifi_direct_init_miracast(bool enable);
  * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  The MAC address of peer to get
  * @param[out] peer_info  The peer information to be passed
- * @return 0 on success, otherwise a negative error value.
+ * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
@@ -1909,6 +1955,210 @@ int wifi_direct_init_miracast(bool enable);
  */
 int wifi_direct_get_peer_info(char *mac_address, wifi_direct_discovered_peer_info_s **peer_info);
 
+/**
+ * @brief Enables  Wi-Fi Display (WFD) functionality and  initialize the various variables required for WFD.
+ * @details Starts listen in only assigned channel.Device will be discoverable only in assigned listen channel.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @return 0 on success, otherwise a negative error value
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+ * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+ * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate()
+ * @see wifi_direct_initialize()
+ * @see wifi_direct_activate()
+ * @see wifi_direct_deinit_display()
+ * @see wifi_direct_set_display()
+ */
+int wifi_direct_init_display(void);
+
+/**
+ * @brief This API shall disable Wi-Fi Display functionality & disable the support of WFD Information Element (IE).
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @return 0 on success, otherwise a negative error value
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+ * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+ * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate()
+ * And enable Wi-Fi Display by wifi_direct_init_display().
+ * @see wifi_direct_initialize()
+ * @see wifi_direct_activate()
+ * @see wifi_direct_init_display()
+ * @see wifi_direct_set_display()
+ */
+int wifi_direct_deinit_display(void);
+
+/**
+ * @brief Sets the Wi-Fi Display parameters for the WFD IE of local device.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @param[in] type  WFD Device Type: define the Role of WFD device like source or sink
+ * @param[in] port  Specifies Session Management Control Port number. It should be 2 bytes (0~65535)
+ * @param[in] hdcp  CP support bit: (@c 1 = enable the hdcp support, @c 0 = disable the hdcp support)
+ * @return 0 on success, otherwise a negative error value
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+ * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+ * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate()
+ * And enable Wi-Fi Display by wifi_direct_init_display().
+ * @see wifi_direct_initialize()
+ * @see wifi_direct_activate()
+ * @see wifi_direct_init_display()
+ * @see wifi_direct_deinit_display()
+ */
+int wifi_direct_set_display(wifi_direct_display_type_e type, int port, int hdcp);
+
+/**
+ * @brief Sets the Wi-Fi Display Session Availability
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @param[in] availability Wi-Fi Display Session Availability
+ * @return 0 on success, otherwise a negative error value
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+ * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+ * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate()
+ * And enable Wi-Fi Display by wifi_direct_display_init().
+ * @see wifi_direct_initialize()
+ * @see wifi_direct_activate()
+ * @see wifi_direct_init_display()
+ * @see wifi_direct_deinit_display()
+ */
+int wifi_direct_set_display_availability(bool availability);
+
+/**
+ * @brief Gets the information of a peer's Wi-Fi Display device type.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @param[in] mac_address  MAC Address of the PEER
+ * @param[out] type  The information of a peer's Wi-Fi Display device type
+ * @if there's Wi-Fi Direct information, this will be NULL
+ * @return 0 on success, otherwise a negative error value
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+ * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+ * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
+ * @see wifi_direct_initialize()
+ * @see wifi_direct_activate()
+ * @see wifi_direct_foreach_discovered_peers()
+ */
+int wifi_direct_get_peer_display_type(char *mac_address, wifi_direct_display_type_e *type);
+
+/**
+ * @brief Gets the information of a peer's Wi-Fi Display session availability.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @param[in] mac_address  MAC Address of the PEER
+ * @param[out] availability  The information of a peer's Wi-Fi Display session availability
+ * @if there's Wi-Fi Direct information, this will be NULL
+ * @return 0 on success, otherwise a negative error value
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+ * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+ * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
+ * @see wifi_direct_activate()
+ * @see wifi_direct_foreach_discovered_peers()
+ */
+int wifi_direct_get_peer_display_availability(char *mac_address, bool *availability);
+
+/**
+ * @brief Gets the information of a peer's Wi-Fi Display HDCP support.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @param[in] mac_address  MAC Address of the PEER
+ * @param[out] hdcp  The information of a peer's Wi-Fi Display HDCP support
+ * @if there's Wi-Fi Direct information, this will be NULL
+ * @return 0 on success, otherwise a negative error value
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+ * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+ * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
+ * @see wifi_direct_activate()
+ * @see wifi_direct_foreach_discovered_peers()
+ */
+int wifi_direct_get_peer_display_hdcp(char *mac_address, int *hdcp);
+
+/**
+ * @brief Gets the information of a peer's Wi-Fi Display RTSP control port.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @param[in] mac_address  MAC Address of the PEER
+ * @param[out] port  The information of a peer's Wi-Fi Display RTSP control port
+ * @if there's Wi-Fi Direct information, this will be NULL
+ * @return 0 on success, otherwise a negative error value
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+ * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+ * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
+ * @see wifi_direct_activate()
+ * @see wifi_direct_foreach_discovered_peers()
+ */
+int wifi_direct_get_peer_display_port(char *mac_address, int *port);
+
+/**
+ * @brief Gets the information of a peer's Wi-Fi Display max throughput.
+ * @since_tizen 2.4
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @param[in] mac_address  MAC Address of the PEER
+ * @param[out] throughput  The information of a peer's Wi-Fi Display max throughput (Mbps)
+ * @if there's Wi-Fi Direct information, this will be NULL
+ * @return 0 on success, otherwise a negative error value
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+ * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+ * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+ * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
+ * @see wifi_direct_activate()
+ * @see wifi_direct_foreach_discovered_peers()
+ */
+int wifi_direct_get_peer_display_throughput(char *mac_address, int *throughput);
 
 /**
  * @}
