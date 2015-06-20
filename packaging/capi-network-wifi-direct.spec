@@ -1,6 +1,6 @@
 Name:       capi-network-wifi-direct
 Summary:    Network WiFi-Direct library in Tizen CAPI
-Version:    1.2.33
+Version:    1.2.34
 Release:    1
 Group:      Network & Connectivity/Wireless
 License:    Apache-2.0
@@ -26,15 +26,15 @@ Requires: capi-base-common-devel
 %description devel
 wifi direct library (Shared Library) (Development)
 
-%description
+#%description
+#
+#%package -n test-wifi-direct
+#Summary:    Test Application for Wi-Fi Direct
+#Group:      TO_BE_FILLED
+#Requires:   %{name} = %{version}-%{release}
 
-%package -n test-wifi-direct
-Summary:    Test Application for Wi-Fi Direct
-Group:      TO_BE_FILLED
-Requires:   %{name} = %{version}-%{release}
-
-%description -n test-wifi-direct
-Test Application for Wi-Fi Direct
+#%description -n test-wifi-direct
+#Test Application for Wi-Fi Direct
 
 %prep
 %setup -q
@@ -51,6 +51,9 @@ export CFLAGS="$CFLAGS -DTIZEN_DEBUG_ENABLE"
 export CXXFLAGS="$CXXFLAGS -DTIZEN_DEBUG_ENABLE"
 export FFLAGS="$FFLAGS -DTIZEN_DEBUG_ENABLE"
 
+MAJORVER=`echo %{version} | awk 'BEGIN {FS="."}{print $1}'`
+
+
 cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} \
 %if "%{?tizen_profile_name}" == "wearable"
 	-DTIZEN_FEATURE_SERVICE_DISCOVERY=0 \
@@ -65,8 +68,7 @@ cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} \
 %endif
 %endif
 %endif
-	.
-
+	. -DVERSION=%{version} -DMAJORVERSION=${MAJORVER} -DCMAKE_LIB_DIR=%{_libdir}
 make %{?jobs:-j%jobs}
 %install
 rm -rf %{buildroot}
@@ -84,17 +86,16 @@ cp %{_builddir}/%{buildsubdir}/LICENSE.APLv2 %{buildroot}/usr/share/license/%{na
 %files
 %manifest capi-network-wifi-direct.manifest
 %defattr(-,root,root,-)
-%{_libdir}/libwifi-direct.so
-%{_libdir}/libwifi-direct.so.0
-%{_libdir}/libwifi-direct.so.0.0
+%{_libdir}/libwifi-direct.so*
 /usr/share/license/%{name}
 
 %files devel
 %defattr(-,root,root,-)
 %{_libdir}/pkgconfig/capi-network-wifi-direct.pc
 %{_includedir}/wifi-direct/wifi-direct.h
+%{_libdir}/libwifi-direct.so
 
-%files -n test-wifi-direct
-%manifest test-wifi-direct.manifest
-%defattr(4755,app,app,4755)
-%{_bindir}/test-wifi-direct
+#%files -n test-wifi-direct
+#%manifest test-wifi-direct.manifest
+#%defattr(4755,app,app,4755)
+#%{_bindir}/test-wifi-direct

@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(wifi-direct C)
 
 # Global setting
-SET(VERSION 0.0)
+#SET(VERSION 0.0)
 
 MACRO(GET_TARGET_PROPERTY_WITH_DEFAULT _variable _target _property _default_value)
         GET_TARGET_PROPERTY (${_variable} ${_target} ${_property})
@@ -52,7 +52,7 @@ MACRO(CREATE_LIBTOOL_FILE _target _install_DIR)
         FILE(APPEND ${_laname} "dlpreopen='${_target_dlpreopen}'\n\n")
         FILE(APPEND ${_laname} "# Directory that this library needs to be installed in:\n")
         FILE(APPEND ${_laname} "libdir='${CMAKE_INSTALL_PREFIX}${_install_DIR}'\n")
-        INSTALL( FILES ${_laname} DESTINATION ${CMAKE_INSTALL_PREFIX}${_install_DIR})
+        INSTALL( FILES ${_laname} DESTINATION ${_install_DIR})
 ENDMACRO(CREATE_LIBTOOL_FILE)
 
 # Build type : Release
@@ -68,6 +68,8 @@ pkg_check_modules(pkgs REQUIRED vconf glib-2.0 gio-2.0 gthread-2.0 dlog capi-sys
 FOREACH(flag ${pkgs_CFLAGS})
 	SET(EXTRA_CFLAGS "${EXTRA_CFLAGS} ${flag}")
 ENDFOREACH(flag)
+
+SET(LIBDIR ${CMAKE_LIB_DIR})
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include
 		${CMAKE_SOURCE_DIR}/src/include)
@@ -99,7 +101,7 @@ IF(TIZEN_TV)
 ENDIF(TIZEN_TV)
 
 # Linker flags
-SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed")
+SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed, --rpath=${LIBDIR}")
 
 # Build
 SET(SRCS
@@ -108,14 +110,19 @@ SET(SRCS
 
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${SRCS})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${pkgs_LDFLAGS})
-SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES VERSION ${VERSION} SOVERSION 0)
-CREATE_LIBTOOL_FILE(${PROJECT_NAME} /lib)
+SET_TARGET_PROPERTIES(${PROJECT_NAME}
+     PROPERTIES
+     VERSION ${VERSION}
+     SOVERSION ${MAJORVERSION}
+     CLEAN_DIRECT_OUTPUT 1
+)
+CREATE_LIBTOOL_FILE(${PROJECT_NAME} ${LIBDIR})
 
 # pkgconfig file
 CONFIGURE_FILE(capi-network-wifi-direct.pc.in capi-network-wifi-direct.pc @ONLY)
 
 # Install
-INSTALL(TARGETS ${PROJECT_NAME} DESTINATION lib COMPONENT Runtime)
+INSTALL(TARGETS ${PROJECT_NAME} DESTINATION ${LIBDIR} COMPONENT Runtime)
 INSTALL(FILES ${CMAKE_SOURCE_DIR}/include/wifi-direct.h DESTINATION include/wifi-direct)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/capi-network-wifi-direct.pc DESTINATION lib/pkgconfig)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/capi-network-wifi-direct.pc DESTINATION ${LIBDIR}/pkgconfig)
 
