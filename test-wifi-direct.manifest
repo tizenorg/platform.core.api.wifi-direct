@@ -1,11 +1,5 @@
 <manifest>
-	<define>
-		<domain name="test-wifi-direct"/>
-		<request>
-			<smack request="wifi-direct" type="rwx"/>
-		</request>
-	</define>
 	<request>
-		<domain name="test-wifi-direct"/>
+		<domain name="_"/>
 	</request>
 </manifest>

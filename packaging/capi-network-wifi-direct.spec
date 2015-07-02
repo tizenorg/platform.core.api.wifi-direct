@@ -1,6 +1,6 @@
 Name:       capi-network-wifi-direct
 Summary:    Network WiFi-Direct library in Tizen CAPI
-Version:    1.2.34
+Version:    1.2.35
 Release:    1
 Group:      Network & Connectivity/Wireless
 License:    Apache-2.0
