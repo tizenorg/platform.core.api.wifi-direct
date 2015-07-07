@@ -1,6 +1,6 @@
 Name:       capi-network-wifi-direct
 Summary:    Network WiFi-Direct library in Tizen CAPI
-Version:    1.2.35
+Version:    1.2.36
 Release:    1
 Group:      Network & Connectivity/Wireless
 License:    Apache-2.0
@@ -55,15 +55,15 @@ MAJORVER=`echo %{version} | awk 'BEGIN {FS="."}{print $1}'`
 
 
 cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} \
-%if "%{?tizen_profile_name}" == "wearable"
+%if "%{profile}" == "wearable"
 	-DTIZEN_FEATURE_SERVICE_DISCOVERY=0 \
 	-DTIZEN_FEATURE_WIFI_DISPLAY=0 \
 %else
-%if "%{?tizen_profile_name}" == "mobile"
+%if "%{profile}" == "mobile"
 	-DTIZEN_FEATURE_SERVICE_DISCOVERY=1 \
 	-DTIZEN_FEATURE_WIFI_DISPLAY=1 \
 %else
-%if "%{?tizen_profile_name}" == "tv"
+%if "%{profile}" == "tv"
 	-DTIZEN_TV=1 \
 %endif
 %endif
