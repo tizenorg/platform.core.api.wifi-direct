@@ -950,9 +950,6 @@ int wifi_direct_initialize(void)
 		__WDC_LOG_FUNC_END__;
 		return WIFI_DIRECT_ERROR_ALREADY_INITIALIZED;
 	}
-
-/*TEMP: Hawk-P Tizen TV Platform does not support security check*/
-#if !defined TIZEN_TV
 	res = system_info_get_platform_bool("tizen.org/feature/network.wifi.direct", &wifi_direct_enable);
 	if (res < 0) {
 		WDC_LOGE("Failed to get sys info");
@@ -963,8 +960,6 @@ int wifi_direct_initialize(void)
 		WDC_LOGE("Wi-Fi Direct not supported");
 		return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
 	}
-
-#endif
 	sockfd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (sockfd < 0) {
 		WDC_LOGE("Error!!! creating sync socket[%s]", strerror(errno));

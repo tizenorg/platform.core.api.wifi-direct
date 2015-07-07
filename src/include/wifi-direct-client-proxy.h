@@ -75,7 +75,6 @@
 #define WIFIDIRECT_DISPLAY_FEATURE 				"http://tizen.org/feature/network.wifi.direct.display"
 #define WIFIDIRECT_SERVICE_DISCOVERY_FEATURE 	"http://tizen.org/feature/network.wifi.direct.service_discovery"
 
-#if !defined TIZEN_TV
 #define CHECK_FEATURE_SUPPORTED(feature_name)\
 	do {\
 		bool feature_supported = FALSE;\
@@ -89,10 +88,6 @@
 			return WIFI_DIRECT_ERROR_OPERATION_FAILED;\
 		}\
 	}while(0)
-
-#else
-#define CHECK_FEATURE_SUPPORTED(feature_name)
-#endif
 
 typedef struct
 {
