@@ -449,8 +449,8 @@ char *__wfd_client_print_cmd(wifi_direct_cmd_e cmd)
 		return "WIFI_DIRECT_CMD_ACTIVATE_PERSISTENT_GROUP";
 	case WIFI_DIRECT_CMD_DEACTIVATE_PERSISTENT_GROUP:
 		return "WIFI_DIRECT_CMD_DEACTIVATE_PERSISTENT_GROUP";
-	case WIFI_DIRECT_CMD_IS_PERSISTENT_GROUP:
-		return "WIFI_DIRECT_CMD_IS_PERSISTENT_GROUP";
+	case WIFI_DIRECT_CMD_IS_PERSISTENT_GROUP_ACTIVATED:
+		return "WIFI_DIRECT_CMD_IS_PERSISTENT_GROUP_ACTIVATED";
 	case WIFI_DIRECT_CMD_GET_PERSISTENT_GROUP_INFO:
 		return "WIFI_DIRECT_CMD_GET_PERSISTENT_GROUP_INFO";
 	case WIFI_DIRECT_CMD_REMOVE_PERSISTENT_GROUP:
@@ -3433,8 +3433,13 @@ int wifi_direct_get_primary_device_type(wifi_direct_primary_device_type_e* type)
 		return WIFI_DIRECT_ERROR_NOT_INITIALIZED;
 	}
 
+#ifdef TIZEN_TV
+	WDC_LOGD("Current primary_dev_type [%d]", WIFI_DIRECT_PRIMARY_DEVICE_TYPE_DISPLAY);
+	*type = WIFI_DIRECT_PRIMARY_DEVICE_TYPE_DISPLAY;
+#else /* TIZEN_TV */
 	WDC_LOGD("Current primary_dev_type [%d]", WIFI_DIRECT_PRIMARY_DEVICE_TYPE_TELEPHONE);
 	*type = WIFI_DIRECT_PRIMARY_DEVICE_TYPE_TELEPHONE;
+#endif /* TIZEN_TV */
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
@@ -3459,8 +3464,13 @@ int wifi_direct_get_secondary_device_type(wifi_direct_secondary_device_type_e* t
 		return WIFI_DIRECT_ERROR_INVALID_PARAMETER;
 	}
 
+#ifdef TIZEN_TV
+	WDC_LOGD("Current second_dev_type [%d]", WIFI_DIRECT_SECONDARY_DEVICE_TYPE_DISPLAY_TV);
+	*type = WIFI_DIRECT_SECONDARY_DEVICE_TYPE_DISPLAY_TV;
+#else /* TIZEN_TV */
 	WDC_LOGD("Current second_dev_type [%d]", WIFI_DIRECT_SECONDARY_DEVICE_TYPE_TELEPHONE_SMARTPHONE_DUAL);
 	*type = WIFI_DIRECT_SECONDARY_DEVICE_TYPE_TELEPHONE_SMARTPHONE_DUAL;	// smart phone dual mode (wifi and cellular)
+#endif /* TIZEN_TV */
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
@@ -3607,7 +3617,7 @@ int wifi_direct_is_persistent_group_enabled(bool *enabled)
 	memset(&req, 0, sizeof(wifi_direct_client_request_s));
 	memset(&rsp, 0, sizeof(wifi_direct_client_response_s));
 
-	req.cmd = WIFI_DIRECT_CMD_IS_PERSISTENT_GROUP;
+	req.cmd = WIFI_DIRECT_CMD_IS_PERSISTENT_GROUP_ACTIVATED;
 	req.client_id = g_client_info.client_id;
 
 	res = __wfd_client_send_request(g_client_info.sync_sockfd, &req, &rsp);
@@ -4586,12 +4596,6 @@ int wifi_direct_set_display_availability(bool availability)
 		WDC_LOGE("Client is NOT registered.");
 		__WDC_LOG_FUNC_END__;
 		return WIFI_DIRECT_ERROR_NOT_INITIALIZED;
-	}
-
-	if (availability < 0) {
-		WDC_LOGE("Invalid parameter");
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_INVALID_PARAMETER;
 	}
 
 	memset(&req, 0, sizeof(wifi_direct_client_request_s));

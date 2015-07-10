@@ -73,13 +73,14 @@ enum
 	CMD_DEACTIVATE_WIFI_DIRECT,
 	CMD_START_DISCOVER,
 	CMD_START_DISCOVER_WITH_LISTEN_ONLY,
-	CMD_START_DISCOVER_SPECIFIC_CHANNEL,	
+	CMD_START_DISCOVER_SPECIFIC_CHANNEL,
 	CMD_CANCEL_DISCOVER,
 	CMD_GET_DISVOCERY_RESULT,
 	//CMD_SEND_PROVISION_DISCOVER_REQ,
 	CMD_SEND_CONNECTION_REQ,
 	CMD_GET_LINK_STATUS,
 	CMD_CONNECT_PEER,
+	CMD_CANCEL_CONNECTION,
 	CMD_DISCONNECT_ALL,
 	CMD_DISCONNECT,
 
@@ -127,23 +128,23 @@ enum
 	CMD_UNSET_ACTIVATION_CB,
 	CMD_UNSET_DISCOVER_CB,
 	CMD_UNSET_SERVICE_CB,
-	CMD_UNSET_CONNECTION_CB,	
+	CMD_UNSET_CONNECTION_CB,
 	CMD_UNSET_PEER_FOUND_CB,
 	CMD_UNSET_DEVICE_NAME_CB,
 	CMD_GET_NETWORK_IF_NAME,
 	CMD_GET_SUBNET_MASK,
-	CMD_GET_GATEWAY_ADDR,	
+	CMD_GET_GATEWAY_ADDR,
 	CMD_IS_DISCOVERABLE,
 	CMD_IS_LISTEN_ONLY,
 	CMD_GET_PRIMARY_DEVICE_TYPE,
-	CMD_GET_SECONDARY_DEVICE_TYPE,	
+	CMD_GET_SECONDARY_DEVICE_TYPE,
 	CMD_GET_OPERATING_CHANNEL,
 	CMD_GET_IP_ADDR,
 	CMD_REGISTER_SERVICE,
 	CMD_DEREGISTER_SERVICE,
 	CMD_START_SERVICE_DISCOVERY,
 	CMD_CANCEL_SERVICE_DISCOVERY,
-	
+
 	CMD_INCREASE_OEM_LOGLEVEL,
 	CMD_DECREASE_OEM_LOGLEVEL,
 	CMD_DEINITIALIZE,
@@ -189,6 +190,7 @@ menu_str_t g_menu_str[] =
 
 		{ CMD_GET_LINK_STATUS, "CMD_GET_LINK_STATUS" },
 		{ CMD_CONNECT_PEER, "CMD_CONNECT_PEER" },
+		{ CMD_CANCEL_CONNECTION, "CMD_CANCEL_CONNECTION" },
 		{ CMD_DISCONNECT_ALL, "CMD_DISCONNECT_ALL" },
 		{ CMD_DISCONNECT, "CMD_DISCONNECT" },
 
@@ -210,13 +212,13 @@ menu_str_t g_menu_str[] =
 		{ CMD_GET_MAX_CLIENT, "CMD_GET_MAX_CLIENT" },
 		{ CMD_SET_HIDE_SSID, "CMD_SET_HIDE_SSID" },
 		{ CMD_ACTIVATE_PERSISTENT_GROUP, "CMD_ACTIVATE_PERSISTENT_GROUP" },
-		{ CMD_DEACTIVATE_PERSISTENT_GROUP, "CMD_DEACTIVATE_PERSISTENT_GROUP" },		
+		{ CMD_DEACTIVATE_PERSISTENT_GROUP, "CMD_DEACTIVATE_PERSISTENT_GROUP" },
 		{ CMD_IS_PERSISTENT_GROUP_ACTIVATED, "CMD_IS_PERSISTENT_GROUP_ACTIVATED" },
 		{ CMD_GET_PERSISTENT_GROUP_LIST, "CMD_GET_PERSISTENT_GROUP_LIST" },
 		{ CMD_REMOVE_PERSISTENT_GROUP, "CMD_REMOVE_PERSISTENT_GROUP" },
 		//{ CMD_SET_GROUP_OWNER, "CMD_SET_GROUP_OWNER" },
 		{ CMD_SET_AUTO_CONNECTION, "CMD_SET_AUTO_CONNECTION" },
-		{ CMD_IS_AUTO_CONNECTION, "CMD_IS_AUTO_CONNECTION" },		
+		{ CMD_IS_AUTO_CONNECTION, "CMD_IS_AUTO_CONNECTION" },
 		//{ CMD_SET_LISTEN_ONLY, "CMD_SET_LISTEN_ONLY" },
 		{ CMD_SET_WPS_PIN, "CMD_SET_WPS_PIN" },
 		{ CMD_GET_WPS_PIN, "CMD_GET_WPS_PIN" },
@@ -243,7 +245,7 @@ menu_str_t g_menu_str[] =
 		{ CMD_IS_DISCOVERABLE, "CMD_IS_DISCOVERABLE" },
 		{ CMD_IS_LISTEN_ONLY, "CMD_IS_LISTEN_ONLY" },
 		{ CMD_GET_PRIMARY_DEVICE_TYPE, "CMD_GET_PRIMARY_DEVICE_TYPE" },
-		{ CMD_GET_SECONDARY_DEVICE_TYPE, "CMD_GET_SECONDARY_DEVICE_TYPE" },		
+		{ CMD_GET_SECONDARY_DEVICE_TYPE, "CMD_GET_SECONDARY_DEVICE_TYPE" },
 		{ CMD_GET_OPERATING_CHANNEL, "CMD_GET_OPERATING_CHANNEL" },
 		{ CMD_GET_IP_ADDR, "CMD_GET_IP_ADDR" },
 		{ CMD_REGISTER_SERVICE, "CMD_REGISTER_SERVICE" },
@@ -572,17 +574,17 @@ void _cb_activation(int error_code, wifi_direct_device_state_e device_state, voi
 bool _cb_discovered_peers_impl(wifi_direct_discovered_peer_info_s* peer, void* user_data)
 {
 	__FUNC_ENTER__;
-	
+
 	struct appdata* ad = (struct appdata*) user_data;
 
 	if(NULL != peer)
 	{
 		if ( ad->peer_count >= MAX_PEER_NUM )
 			return false;	// break out of the loop
-		
+
 		memcpy(&ad->peer_list[ad->peer_count], peer, sizeof(wifi_direct_discovered_peer_info_s));
 		ad->peer_count++;
-		
+
 	}
 
 	return true;    // continue with the next iteration of the loop
@@ -591,17 +593,17 @@ bool _cb_discovered_peers_impl(wifi_direct_discovered_peer_info_s* peer, void* u
 bool _cb_connected_peers_impl(wifi_direct_connected_peer_info_s* peer, void* user_data)
 {
 	__FUNC_ENTER__;
-	
+
 	struct appdata* ad = (struct appdata*) user_data;
 
 	if(NULL != peer)
 	{
 		if ( ad->connected_peer_count >= MAX_PEER_NUM )
 			return false;	// break out of the loop
-		
+
 		memcpy(&ad->connected_peer_list[ad->connected_peer_count], peer, sizeof(wifi_direct_connected_peer_info_s));
 		ad->connected_peer_count++;
-		
+
 	}
 
 	return true;    // continue with the next iteration of the loop
@@ -610,7 +612,7 @@ bool _cb_connected_peers_impl(wifi_direct_connected_peer_info_s* peer, void* use
 bool _cb_persistent_groups_impl(const char* mac_address, const char* ssid, void* user_data)
 {
 	__FUNC_ENTER__;
-	
+
 	struct appdata* ad = (struct appdata*) user_data;
 
 	if(NULL != mac_address)
@@ -651,7 +653,7 @@ void _cb_discover(int error_code, wifi_direct_discovery_state_e discovery_state,
 			memset(ad->peer_list, 0x00, sizeof(wifi_direct_discovered_peer_info_s)*MAX_PEER_NUM);
 			ad->peer_count = 0;
 			ad ->selected_peer_index = 0;
-			
+
 			ret = wifi_direct_foreach_discovered_peers(_cb_discovered_peers_impl, (void*)ad);
 			printf("wifi_direct_foreach_discovered_peers() ret=[%d]\n", ret);
 		}
@@ -778,9 +780,9 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 			if(NULL != mac_address)
 				strncpy(_peer_mac, mac_address, strlen(mac_address));
 
-			
+
 			printf ("Connection start with [%s] \n", _peer_mac);
-		
+
 			event_printf("Error None\n");
 
 		}
@@ -846,7 +848,7 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 		event_printf("event - WIFI_DIRECT_CONNECTION_WPS_REQ\n");
 
 		wifi_direct_wps_type_e wps_mode;
-		
+
 		int result;
 
 		result = wifi_direct_get_local_wps_type(&wps_mode);
@@ -925,7 +927,7 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 		int result;
 
 		memset(incomming_peer_mac, 0, sizeof(incomming_peer_mac));
-		
+
 		if(NULL != mac_address)
 			strncpy(incomming_peer_mac, mac_address, strlen(mac_address));
 
@@ -939,13 +941,11 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 
 		if(auto_connection_mode == TRUE)
 		{
-		
 			result = wifi_direct_accept_connection(incomming_peer_mac);
 			printf("wifi_direct_accept_connection() result=[%d]\n", result);
 		}
 		else
 		{
-		
 			if ( wps_mode == WIFI_DIRECT_WPS_TYPE_PBC)
 			{
 				char pushbutton;
@@ -953,13 +953,18 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 				printf("************\n");
 				printf("Connect? (Y/N)\n");
 				printf("*************\n");
-				
+
 				scanf("%c", &pushbutton);
 
 				if( (pushbutton == 'Y') || (pushbutton == 'y') )
 				{
 					result = wifi_direct_accept_connection(incomming_peer_mac);
 					printf("wifi_direct_accept_connection() result=[%d]\n", result);
+				}
+				else
+				{
+					result = wifi_direct_reject_connection(incomming_peer_mac);
+					printf("wifi_direct_reject_connection() result=[%d]\n", result);
 				}
 			}
 			else if ( wps_mode == WIFI_DIRECT_WPS_TYPE_PIN_KEYPAD )
@@ -987,19 +992,16 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 				}
 				else
 					printf("wifi_direct_set_wps_pin Error [%d]\n", result);
-				
+
 			}
 			else
 			{
 				printf("wps_config is unkown!\n");
 			}
 		}
-		
-
-				
 	}
 	break;
-	
+
 	case WIFI_DIRECT_DISCONNECTION_IND:
 	{
 		event_printf("event - WIFI_DIRECT_DISCONNECTION_IND\n");
@@ -1012,13 +1014,13 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 				strncpy(incomming_peer_mac, mac_address, strlen(mac_address));
 
 			printf ("Disconnection IND from [%s] \n", incomming_peer_mac);
-		
+
 			event_printf("Error None\n");
-		}	
-		
+		}
+
 	}
 	break;
-	
+
 	case WIFI_DIRECT_DISCONNECTION_RSP:
 	{
 		event_printf("event - WIFI_DIRECT_DISCONNECTION_RSP\n");
@@ -1029,18 +1031,17 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 
 			if(NULL != mac_address)
 				strncpy(incomming_peer_mac, mac_address, strlen(mac_address));
-			
+
 			printf ("Disconnection RSP with [%s] \n", incomming_peer_mac);
-		
+
 			event_printf("Error None\n");
-		}	
-		
+		}
+
 	}
 	break;
 
 	case WIFI_DIRECT_DISASSOCIATION_IND:
 	{
-
 		event_printf("event - WIFI_DIRECT_DISASSOCIATION_IND\n");
 	
 		if ( error_code == WIFI_DIRECT_ERROR_NONE )
@@ -1459,7 +1460,21 @@ void process_input(const char *input, gpointer user_data)
 								list[i].device_name);
 
 				printf("wifi_direct_connect() result=[%d]\n", result);
-				
+
+			}
+		}
+		break;
+
+	case CMD_CANCEL_CONNECTION:
+		if (ad != NULL)
+		{
+			if (select_peer(ad))
+			{
+				int i = ad->selected_peer_index;
+				wifi_direct_discovered_peer_info_s* list = ad->peer_list;
+
+				result = wifi_direct_cancel_connection(list[i].mac_address);
+				printf("wifi_direct_cancel_connection() result=[%d]\n", result);
 			}
 		}
 		break;
@@ -2430,23 +2445,17 @@ void process_input(const char *input, gpointer user_data)
 	{
 		if (ad != NULL)
 		{
-			char passphrase[64 + 1];
+			char passphrase[64] = {0, };
 
-			memset(passphrase, 0, sizeof(passphrase));
 			printf("Input passphrase :\n");
-			scanf("%s",passphrase);
+			scanf(" %64[^\n]s", passphrase);
 
-			if (strlen(passphrase) <= 0)
-				printf("invalid passphrase !!\n");
-			else
+			if (strlen(passphrase) > 0) {
 				printf("passphrase: [%s]\n", passphrase);
-
-
-			if ((strlen(passphrase) > 0))
-			{
 				result = wifi_direct_set_passphrase(passphrase);
 				printf("wifi_direct_set_passphrase() ret=[%d]\n", result);
-			}
+			} else
+				printf("invalid passphrase !!\n");
 		}
 	}
 	break;
@@ -2730,7 +2739,7 @@ int main(int argc, char **argv)
 	ad->main_loop = main_loop;
 #if 0
 	ad->peer_list = NULL;
-#endif	
+#endif
 	ad->peer_count = 0;
 
 	set_appdata(ad);
