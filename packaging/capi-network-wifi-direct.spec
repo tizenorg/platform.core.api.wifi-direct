@@ -1,6 +1,6 @@
 Name:       capi-network-wifi-direct
 Summary:    Network WiFi-Direct library in Tizen CAPI
-Version:    1.2.37
+Version:    1.2.38
 Release:    1
 Group:      Network & Connectivity/Wireless
 License:    Apache-2.0
@@ -93,6 +93,7 @@ cp %{_builddir}/%{buildsubdir}/LICENSE.APLv2 %{buildroot}/usr/share/license/%{na
 %defattr(-,root,root,-)
 %{_libdir}/pkgconfig/capi-network-wifi-direct.pc
 %{_includedir}/wifi-direct/wifi-direct.h
+%{_includedir}/wifi-direct/wifi-direct-internal.h
 %{_libdir}/libwifi-direct.so
 
 #%files -n test-wifi-direct

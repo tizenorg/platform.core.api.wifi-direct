@@ -80,6 +80,7 @@ enum
 	CMD_SEND_CONNECTION_REQ,
 	CMD_GET_LINK_STATUS,
 	CMD_CONNECT_PEER,
+	CMD_CANCEL_CONNECTION,
 	CMD_DISCONNECT_ALL,
 	CMD_DISCONNECT,
 
@@ -189,6 +190,7 @@ menu_str_t g_menu_str[] =
 
 		{ CMD_GET_LINK_STATUS, "CMD_GET_LINK_STATUS" },
 		{ CMD_CONNECT_PEER, "CMD_CONNECT_PEER" },
+		{ CMD_CANCEL_CONNECTION, "CMD_CANCEL_CONNECTION" },
 		{ CMD_DISCONNECT_ALL, "CMD_DISCONNECT_ALL" },
 		{ CMD_DISCONNECT, "CMD_DISCONNECT" },
 
@@ -939,13 +941,11 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 
 		if(auto_connection_mode == TRUE)
 		{
-		
 			result = wifi_direct_accept_connection(incomming_peer_mac);
 			printf("wifi_direct_accept_connection() result=[%d]\n", result);
 		}
 		else
 		{
-		
 			if ( wps_mode == WIFI_DIRECT_WPS_TYPE_PBC)
 			{
 				char pushbutton;
@@ -960,6 +960,11 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 				{
 					result = wifi_direct_accept_connection(incomming_peer_mac);
 					printf("wifi_direct_accept_connection() result=[%d]\n", result);
+				}
+				else
+				{
+					result = wifi_direct_reject_connection(incomming_peer_mac);
+					printf("wifi_direct_reject_connection() result=[%d]\n", result);
 				}
 			}
 			else if ( wps_mode == WIFI_DIRECT_WPS_TYPE_PIN_KEYPAD )
@@ -994,9 +999,6 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 				printf("wps_config is unkown!\n");
 			}
 		}
-		
-
-				
 	}
 	break;
 	
@@ -1040,7 +1042,6 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 
 	case WIFI_DIRECT_DISASSOCIATION_IND:
 	{
-
 		event_printf("event - WIFI_DIRECT_DISASSOCIATION_IND\n");
 	
 		if ( error_code == WIFI_DIRECT_ERROR_NONE )
@@ -1460,6 +1461,20 @@ void process_input(const char *input, gpointer user_data)
 
 				printf("wifi_direct_connect() result=[%d]\n", result);
 				
+			}
+		}
+		break;
+
+	case CMD_CANCEL_CONNECTION:
+		if (ad != NULL)
+		{
+			if (select_peer(ad))
+			{
+				int i = ad->selected_peer_index;
+				wifi_direct_discovered_peer_info_s* list = ad->peer_list;
+
+				result = wifi_direct_cancel_connection(list[i].mac_address);
+				printf("wifi_direct_cancel_connection() result=[%d]\n", result);
 			}
 		}
 		break;
@@ -2430,23 +2445,17 @@ void process_input(const char *input, gpointer user_data)
 	{
 		if (ad != NULL)
 		{
-			char passphrase[64 + 1];
+			char passphrase[64] = {0, };
 
-			memset(passphrase, 0, sizeof(passphrase));
 			printf("Input passphrase :\n");
-			scanf("%s",passphrase);
+			scanf(" %64[^\n]s", passphrase);
 
-			if (strlen(passphrase) <= 0)
-				printf("invalid passphrase !!\n");
-			else
+			if (strlen(passphrase) > 0) {
 				printf("passphrase: [%s]\n", passphrase);
-
-
-			if ((strlen(passphrase) > 0))
-			{
 				result = wifi_direct_set_passphrase(passphrase);
 				printf("wifi_direct_set_passphrase() ret=[%d]\n", result);
-			}
+			} else
+				printf("invalid passphrase !!\n");
 		}
 	}
 	break;
