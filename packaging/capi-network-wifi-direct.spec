@@ -88,6 +88,7 @@ cp %{_builddir}/%{buildsubdir}/LICENSE.APLv2 %{buildroot}/usr/share/license/%{na
 %defattr(-,root,root,-)
 %{_libdir}/libwifi-direct.so*
 /usr/share/license/%{name}
+%{_bindir}/test-wifi-direct
 
 %files devel
 %defattr(-,root,root,-)
