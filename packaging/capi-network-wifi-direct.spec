@@ -1,5 +1,5 @@
 Name:       capi-network-wifi-direct
-Summary:    Network WiFi-Direct library in Tizen CAPI
+Summary:    Network WiFi-Direct Library
 Version:    1.2.38
 Release:    1
 Group:      Network & Connectivity/Wireless
@@ -16,25 +16,24 @@ BuildRequires:  cmake
 BuildRequires:  gettext-devel
 
 %description
-wifi direct library (Shared Library)
+Network WiFi-Direct library in Tizen CAPI (Shared Library)
 
 %package devel
-Summary:    Wifi Direct Library (Shared Library) (Development)
+Summary:    Network WiFi-Direct Library (Development)
 Group:      Development/Libraries
 Requires:   %{name} = %{version}-%{release}
 Requires: capi-base-common-devel
-%description devel
-wifi direct library (Shared Library) (Development)
 
-#%description
-#
+%description devel
+Network WiFi-Direct library in Tizen CAPI (Shared Library) (Development)
+
 #%package -n test-wifi-direct
 #Summary:    Test Application for Wi-Fi Direct
 #Group:      TO_BE_FILLED
 #Requires:   %{name} = %{version}-%{release}
 
 #%description -n test-wifi-direct
-#Test Application for Wi-Fi Direct
+#Test Application for Wi-Fi Direct Framework
 
 %prep
 %setup -q
