@@ -654,6 +654,10 @@ void _cb_discover(int error_code, wifi_direct_discovery_state_e discovery_state,
 		}
 		break;
 
+		case WIFI_DIRECT_DISCOVERY_LOST:
+			event_printf("event - WIFI_DIRECT_DISCOVERY_LOST\n");
+			break;
+
 		default:
 		break;
 	}

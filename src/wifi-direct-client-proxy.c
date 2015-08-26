@@ -188,6 +188,9 @@ static char *__wfd_print_event(wfd_client_event_e event)
 	case WIFI_DIRECT_CLI_EVENT_DISCOVER_FOUND_PEERS:
 		return "WIFI_DIRECT_CLI_EVENT_DISCOVER_FOUND_PEERS";
 		break;
+	case WIFI_DIRECT_CLI_EVENT_DISCOVER_LOST_PEERS:
+		return "WIFI_DIRECT_CLI_EVENT_DISCOVER_LOST_PEERS";
+		break;
 	case WIFI_DIRECT_CLI_EVENT_CONNECTION_START:
 		return "WIFI_DIRECT_CLI_EVENT_CONNECTION_START";
 		break;
@@ -298,6 +301,9 @@ static int __wfd_convert_client_event(wfd_client_event_e event)
 		break;
 	case WIFI_DIRECT_CLI_EVENT_DISCOVER_FOUND_PEERS:
 		return WIFI_DIRECT_DISCOVERY_FOUND;
+		break;
+	case WIFI_DIRECT_CLI_EVENT_DISCOVER_LOST_PEERS:
+		return WIFI_DIRECT_DISCOVERY_LOST;
 		break;
 	case WIFI_DIRECT_CLI_EVENT_DISCOVER_END:
 		return WIFI_DIRECT_DISCOVERY_FINISHED;
@@ -716,6 +722,7 @@ static gboolean __wfd_client_process_event(GIOChannel *source,
 					client->user_data_for_cb_activation);
 		break;
 	case WIFI_DIRECT_CLI_EVENT_DISCOVER_FOUND_PEERS:
+	case WIFI_DIRECT_CLI_EVENT_DISCOVER_LOST_PEERS:
 		if (client->peer_found_cb) {
 			client->peer_found_cb(error,
 					(wifi_direct_discovery_state_e) __wfd_convert_client_event(event),
