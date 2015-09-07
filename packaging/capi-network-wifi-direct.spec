@@ -1,6 +1,6 @@
 Name:       capi-network-wifi-direct
 Summary:    Network WiFi-Direct Library
-Version:    1.2.39
+Version:    1.2.40
 Release:    1
 Group:      Network & Connectivity/Wireless
 License:    Apache-2.0
@@ -64,6 +64,8 @@ cmake -DCMAKE_INSTALL_PREFIX=%{_prefix} \
 %else
 %if "%{profile}" == "tv"
 	-DTIZEN_TV=1 \
+	-DTIZEN_FEATURE_SERVICE_DISCOVERY=1 \
+	-DTIZEN_FEATURE_WIFI_DISPLAY=1 \
 %endif
 %endif
 %endif
