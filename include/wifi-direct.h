@@ -1302,7 +1302,7 @@ int wifi_direct_get_primary_device_type(wifi_direct_primary_device_type_e *type)
 int wifi_direct_get_secondary_device_type(wifi_direct_secondary_device_type_e* type);
 
 /**
- * @brief Set the WPS config PBC as prefered method for connection.
+ * @brief Set the WPS config PBC as preferred method for connection.
  * @since_tizen 2.3
  * @privlevel public
  * @privilege http://tizen.org/privilege/wifidirect

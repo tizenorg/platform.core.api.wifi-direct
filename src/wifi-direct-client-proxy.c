@@ -1104,7 +1104,7 @@ int wifi_direct_deinitialize(void)
 	if (res < 0)
 		WDC_LOGD("Failed to deinitialize. But continue deinitialization");
 	else
-		WDC_LOGD("Deinit Successfull");
+		WDC_LOGD("Deinit Successful");
 
 	__wfd_reset_control();
 	__WDC_LOG_FUNC_END__;

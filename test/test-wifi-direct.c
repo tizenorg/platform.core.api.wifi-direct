@@ -894,7 +894,7 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 		}
 		else
 		{
-			printf("wps_config is unkown!\n");
+			printf("wps_config is unknown!\n");
 		}
 
 	}
@@ -980,7 +980,7 @@ void _cb_connection(int error_code, wifi_direct_connection_state_e connection_st
 			}
 			else
 			{
-				printf("wps_config is unkown!\n");
+				printf("wps_config is unknown!\n");
 			}
 		}
 	}
@@ -2456,7 +2456,7 @@ void process_input(const char *input, gpointer user_data)
 			int rv = wifi_direct_set_display_availability(availability);
 			if (WIFI_DIRECT_ERROR_NONE == rv)
 			{
-				printf(MAKE_GREEN"Set Wi-Fi Display availability Successfull"RESET_COLOR"\n");
+				printf(MAKE_GREEN"Set Wi-Fi Display availability Successful"RESET_COLOR"\n");
 				break;
 			}
 			printf(MAKE_RED"Set Wi-Fi Display availability : %s ",test_wfd_convert_error_to_string(rv));
