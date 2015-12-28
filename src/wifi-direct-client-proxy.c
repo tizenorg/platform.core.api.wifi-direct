@@ -1025,7 +1025,6 @@ int wifi_direct_initialize(void)
 		__WDC_LOG_FUNC_END__;
 		return WIFI_DIRECT_ERROR_COMMUNICATION_FAILED;
 	}
-	g_client_info.async_sockfd = async_sockfd;
 
 	GIOChannel *gio = g_io_channel_unix_new(g_client_info.async_sockfd);
 	int g_source_id = g_io_add_watch(gio, G_IO_IN | G_IO_ERR | G_IO_HUP,
