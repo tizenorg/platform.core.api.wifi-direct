@@ -575,12 +575,13 @@ static int __wfd_client_write_socket(int sockfd, void *data, int data_len)
 	return 0;
 }
 
-static int __wfd_client_read_socket(int sockfd, char *data, int data_len)
+static int __wfd_client_read_socket(int sockfd, char *data, int num, int data_len)
 {
 	__WDC_LOG_FUNC_START__;
 	int rbytes = 0;
 	int total_rbytes = 0;
 	int res = 0;
+	size_t len = num * data_len;
 
 	if (sockfd < 0) {
 		WDC_LOGE("Error!!! Invalid socket FD [%d]", sockfd);
@@ -588,7 +589,7 @@ static int __wfd_client_read_socket(int sockfd, char *data, int data_len)
 		return -1;
 	}
 
-	if (!data || data_len <= 0) {
+	if (!data || len <= 0) {
 		WDC_LOGE("Error!!! Invalid parameter");
 		__WDC_LOG_FUNC_END__;
 		return -1;
@@ -603,15 +604,15 @@ static int __wfd_client_read_socket(int sockfd, char *data, int data_len)
 		return WIFI_DIRECT_ERROR_RESOURCE_BUSY;
 	}
 
-	while (data_len) {
-		rbytes = read(sockfd, data, data_len);
+	while (len) {
+		rbytes = read(sockfd, data, len);
 		if (rbytes <= 0) {
 			WDC_LOGE("Failed to read socket[%d] [%s]", sockfd, strerror(errno));
 			return -1;
 		}
 		total_rbytes += rbytes;
 		data += rbytes;
-		data_len -= rbytes;
+		len -= rbytes;
 	}
 
 	__WDC_LOG_FUNC_END__;
@@ -641,7 +642,7 @@ static int __wfd_client_send_request(int sockfd, wifi_direct_client_request_s *r
 	}
 	WDC_LOGD("Succeeded to send request [%d: %s]", req->cmd, __wfd_client_print_cmd(req->cmd));
 
-	res = __wfd_client_read_socket(sockfd, (char*) rsp, sizeof(wifi_direct_client_response_s));
+	res = __wfd_client_read_socket(sockfd, (char*) rsp, 1, sizeof(wifi_direct_client_response_s));
 	pthread_mutex_unlock(&g_client_info.mutex);
 	if (res <= 0) {
 		WDC_LOGE("Failed to read socket [%d]", res);
@@ -685,7 +686,7 @@ static gboolean __wfd_client_process_event(GIOChannel *source,
 	memset(&client_noti, 0, sizeof(wifi_direct_client_noti_s));
 
 	/* 1.Read socket */
-	res = __wfd_client_read_socket(sockfd, (char*) &client_noti,
+	res = __wfd_client_read_socket(sockfd, (char*) &client_noti, 1,
 								sizeof(wifi_direct_client_noti_s));
 	if (res <= 0) {
 		WDC_LOGE("Error!!! Reading Async Event[%d]", sockfd);
@@ -1687,7 +1688,7 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb cb,
 	}
 	WDC_LOGD("Succeeded to send request [%d: %s]", req.cmd, __wfd_client_print_cmd(req.cmd));
 
-	res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp,
+	res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp, 1,
 								sizeof(wifi_direct_client_response_s));
 	if (res <= 0) {
 		WDC_LOGE("Failed to read socket [%d]", res);
@@ -1711,8 +1712,8 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb cb,
 		return rsp.result;
 	}
 
-	short num = rsp.param1;
-	short num_tmp = 0;
+	int num = (int)rsp.param1;
+	int num_tmp = 0;
 	wfd_discovery_entry_s *buff = NULL;
 	wfd_discovery_entry_s *buff_tmp = NULL;
 
@@ -1732,14 +1733,14 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb cb,
 			return WIFI_DIRECT_ERROR_OPERATION_FAILED;
 		}
 
-		res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff,
-									num * sizeof(wfd_discovery_entry_s));
+		res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff, num,
+									sizeof(wfd_discovery_entry_s));
 		if (num_tmp) {
 			WDC_LOGD("Rest data should be read out");
 			buff_tmp = (wfd_discovery_entry_s*) g_try_malloc0_n(num_tmp, sizeof(wfd_discovery_entry_s));
 			if (buff_tmp) {
-				__wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff_tmp,
-										num_tmp * sizeof(wfd_discovery_entry_s));
+				__wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff_tmp, num_tmp,
+										sizeof(wfd_discovery_entry_s));
 				g_free(buff_tmp);
 			}
 		}
@@ -2080,7 +2081,7 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 	}
 	WDC_LOGD("Succeeded to send request [%d: %s]", req.cmd, __wfd_client_print_cmd(req.cmd));
 
-	res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp,
+	res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp, 1,
 								sizeof(wifi_direct_client_response_s));
 	if (res <= 0) {
 		WDC_LOGE("Failed to read socket [%d]", res);
@@ -2104,7 +2105,7 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 		return rsp.result;
 	}
 
-	short num = rsp.param1;
+	int num = (int)rsp.param1;
 	wfd_connected_peer_info_s *buff = NULL;
 
 	WDC_LOGD("Num of connected peers = %d", (int) rsp.param1);
@@ -2118,8 +2119,8 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 			return WIFI_DIRECT_ERROR_OPERATION_FAILED;
 		}
 
-		res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff,
-								num * sizeof(wfd_connected_peer_info_s));
+		res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff, num,
+								sizeof(wfd_connected_peer_info_s));
 		pthread_mutex_unlock(&g_client_info.mutex);
 	} else if (num < 1) {
 		WDC_LOGE("Invalid number of connected peer(%d)", num);
@@ -2132,8 +2133,8 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 			return WIFI_DIRECT_ERROR_OPERATION_FAILED;
 		}
 
-		res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff,
-								num * sizeof(wfd_connected_peer_info_s));
+		res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff, num,
+								sizeof(wfd_connected_peer_info_s));
 		pthread_mutex_unlock(&g_client_info.mutex);
 		if (res <= 0) {
 			free(buff);
@@ -2619,7 +2620,7 @@ int wifi_direct_set_wps_pin(char *pin)
 		return WIFI_DIRECT_ERROR_COMMUNICATION_FAILED;
 	}
 
-	status = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp,
+	status = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp, 1,
 								  sizeof(wifi_direct_client_response_s));
 	pthread_mutex_unlock(&g_client_info.mutex);
 	if (status <= 0) {
@@ -3040,7 +3041,7 @@ int wifi_direct_set_device_name(const char *device_name)
 		return WIFI_DIRECT_ERROR_COMMUNICATION_FAILED;
 	}
 
-	status = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp,
+	status = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp, 1,
 								  sizeof(wifi_direct_client_response_s));
 	pthread_mutex_unlock(&g_client_info.mutex);
 	if (status <= 0) {
@@ -3674,7 +3675,7 @@ int wifi_direct_foreach_persistent_groups(wifi_direct_persistent_group_cb cb,
 	}
 	WDC_LOGD("Succeeded to send request [%d: %s]", req.cmd, __wfd_client_print_cmd(req.cmd));
 
-	res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp,
+	res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp, 1,
 							sizeof(wifi_direct_client_response_s));
 	if (res <= 0) {
 		WDC_LOGE("Failed to read socket [%d]", res);
@@ -3698,8 +3699,8 @@ int wifi_direct_foreach_persistent_groups(wifi_direct_persistent_group_cb cb,
 		return rsp.result;
 	}
 
-	short num = rsp.param1;
-	short num_tmp = 0;
+	int num = (int)rsp.param1;
+	int num_tmp = 0;
 	wfd_persistent_group_info_s *buff = NULL;
 	wfd_persistent_group_info_s *buff_tmp = NULL;
 
@@ -3719,14 +3720,14 @@ int wifi_direct_foreach_persistent_groups(wifi_direct_persistent_group_cb cb,
 			return WIFI_DIRECT_ERROR_OPERATION_FAILED;
 		}
 
-		res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff,
-									num * sizeof(wfd_persistent_group_info_s));
+		res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff, num,
+									sizeof(wfd_persistent_group_info_s));
 		if (num_tmp) {
 			WDC_LOGD("Rest data should be read out");
 			buff_tmp = (wfd_persistent_group_info_s*) calloc(num_tmp, sizeof(wfd_persistent_group_info_s));
 			if (buff_tmp) {
-				__wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff_tmp,
-									num_tmp * sizeof(wfd_persistent_group_info_s));
+				__wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff_tmp, num_tmp,
+									sizeof(wfd_persistent_group_info_s));
 				g_free(buff_tmp);
 			}
 		}
@@ -3832,7 +3833,7 @@ int wifi_direct_remove_persistent_group(char *mac_address, const char *ssid)
 		return WIFI_DIRECT_ERROR_COMMUNICATION_FAILED;
 	}
 
-	status = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp,
+	status = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp, 1,
 								  sizeof(wifi_direct_client_response_s));
 	pthread_mutex_unlock(&g_client_info.mutex);
 	if (status <= 0) {
@@ -4062,7 +4063,7 @@ int wifi_direct_register_service(wifi_direct_service_type_e type, char *info1, c
 	}
 	WDC_LOGD("Success writing data to the socket!");
 
-	status = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp,
+	status = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp, 1,
 								sizeof(wifi_direct_client_response_s));
 	pthread_mutex_unlock(&g_client_info.mutex);
 	if (status <= 0) {
@@ -4211,7 +4212,7 @@ int wifi_direct_get_peer_info(char* mac_address, wifi_direct_discovered_peer_inf
 	}
 	WDC_LOGD("Succeeded to send request [%d: %s]", req.cmd, __wfd_client_print_cmd(req.cmd));
 
-	res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp,
+	res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp, 1,
 								sizeof(wifi_direct_client_response_s));
 	if (res <= 0) {
 		WDC_LOGE("Failed to read socket [%d]", res);
@@ -4244,7 +4245,7 @@ int wifi_direct_get_peer_info(char* mac_address, wifi_direct_discovered_peer_inf
 		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
 	}
 
-	res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff,
+	res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff, 1,
 									sizeof(wfd_discovery_entry_s));
 	pthread_mutex_unlock(&g_client_info.mutex);
 	if (res <= 0) {
@@ -4341,7 +4342,7 @@ int wifi_direct_set_passphrase(const char *passphrase)
 		return WIFI_DIRECT_ERROR_COMMUNICATION_FAILED;
 	}
 
-	status = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp,
+	status = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) &rsp, 1,
 								  sizeof(wifi_direct_client_response_s));
 	pthread_mutex_unlock(&g_client_info.mutex);
 
