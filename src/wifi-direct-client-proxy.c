@@ -2039,7 +2039,7 @@ int wifi_direct_accept_connection(char *mac_address)
 
 
 int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
-												void *user_data)
+					void *user_data)
 {
 	__WDC_LOG_FUNC_START__;
 
@@ -2110,7 +2110,7 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 
 	WDC_LOGD("Num of connected peers = %d", (int) rsp.param1);
 
-	if (num > 8 || num < 1) {
+	if (num > 8) {
 		WDC_LOGE("Invalid number of connected peer(%d)", num);
 		buff = (wfd_connected_peer_info_s*) g_try_malloc0_n(num, sizeof(wfd_connected_peer_info_s));
 		if (!buff) {
@@ -2122,9 +2122,11 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 		res = __wfd_client_read_socket(g_client_info.sync_sockfd, (char*) buff, num,
 								sizeof(wfd_connected_peer_info_s));
 		pthread_mutex_unlock(&g_client_info.mutex);
+
 	} else if (num < 1) {
 		WDC_LOGE("Invalid number of connected peer(%d)", num);
 		pthread_mutex_unlock(&g_client_info.mutex);
+
 	} else {
 		buff = (wfd_connected_peer_info_s*) g_try_malloc0_n(num, sizeof(wfd_connected_peer_info_s));
 		if (!buff) {
