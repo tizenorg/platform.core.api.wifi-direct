@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __WIFI_DIRECT_INTERNAL_H_
-#define __WIFI_DIRECT_INTERNAL_H_
+#ifndef __WIFI_DIRECT_IPC_H__
+#define __WIFI_DIRECT_IPC_H__
 
 #define true 1
 #define false 0
@@ -314,4 +314,4 @@ typedef struct
 } wifi_direct_client_noti_s;
 
 
-#endif	/* __WIFI_DIRECT_INTERNAL_H_ */
+#endif	/* __WIFI_DIRECT_IPC_H__ */
