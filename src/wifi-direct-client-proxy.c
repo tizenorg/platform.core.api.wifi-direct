@@ -1746,7 +1746,7 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb cb,
 		}
 		pthread_mutex_unlock(&g_client_info.mutex);
 		if (res <= 0) {
-			free(buff);
+			g_free(buff);
 			WDC_LOGE("Failed to read socket");
 			__wfd_reset_control();
 			return WIFI_DIRECT_ERROR_OPERATION_FAILED;
@@ -2139,7 +2139,7 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 								sizeof(wfd_connected_peer_info_s));
 		pthread_mutex_unlock(&g_client_info.mutex);
 		if (res <= 0) {
-			free(buff);
+			g_free(buff);
 			WDC_LOGE("socket read error");
 			__wfd_reset_control();
 			return WIFI_DIRECT_ERROR_OPERATION_FAILED;
@@ -3735,7 +3735,7 @@ int wifi_direct_foreach_persistent_groups(wifi_direct_persistent_group_cb cb,
 		}
 		pthread_mutex_unlock(&g_client_info.mutex);
 		if (res <= 0) {
-			free(buff);
+			g_free(buff);
 			WDC_LOGE("socket read error.");
 			__wfd_reset_control();
 			return WIFI_DIRECT_ERROR_OPERATION_FAILED;
@@ -4263,11 +4263,11 @@ int wifi_direct_get_peer_info(char* mac_address, wifi_direct_discovered_peer_inf
 
 	peer = (wifi_direct_discovered_peer_info_s *) g_try_malloc0(sizeof(wifi_direct_discovered_peer_info_s));
 	if (!peer) {
-			WDC_LOGE("Failed to alloc memory");
-			pthread_mutex_unlock(&g_client_info.mutex);
-			g_free(buff);
-			return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-		}
+		WDC_LOGE("Failed to alloc memory");
+		pthread_mutex_unlock(&g_client_info.mutex);
+		g_free(buff);
+		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+	}
 	peer->device_name = g_strdup(buff->device_name);
 	peer->mac_address = (char*) g_try_malloc0(MACSTR_LEN);
 	g_snprintf(peer->mac_address, MACSTR_LEN, MACSTR, MAC2STR(buff->mac_address));
