@@ -22,41 +22,8 @@
 #ifndef __WIFI_DIRECT_CLIENT_PROXY_H_
 #define __WIFI_DIRECT_CLIENT_PROXY_H_
 
-#ifdef USE_DLOG
-#include <dlog.h>
-
-#undef LOG_TAG
-#define LOG_TAG "WIFI_DIRECT"
-
-#define WDC_LOGV(format, args...) LOGV(format, ##args)
-#define WDC_LOGD(format, args...) LOGD(format, ##args)
-#define WDC_LOGI(format, args...) LOGI(format, ##args)
-#define WDC_LOGW(format, args...) LOGW(format, ##args)
-#define WDC_LOGE(format, args...) LOGE(format, ##args)
-#define WDC_LOGF(format, args...) LOGF(format, ##args)
-
-#define WDC_SECLOGI(format, args...) SECURE_LOG(LOG_INFO, LOG_TAG, format, ##args)
-#define WDC_SECLOGD(format, args...) SECURE_LOG(LOG_DEBUG, LOG_TAG, format, ##args)
-
-#define __WDC_LOG_FUNC_START__ LOGV("Enter")
-#define __WDC_LOG_FUNC_END__ LOGV("Quit")
-
-#else /** _DLOG_UTIL */
-
-#define WDC_LOGV(format, args...)
-#define WDC_LOGD(format, args...)
-#define WDC_LOGI(format, args...)
-#define WDC_LOGW(format, args...)
-#define WDC_LOGE(format, args...)
-#define WDC_LOGF(format, args...)
-
-#define __WDC_LOG_FUNC_START__
-#define __WDC_LOG_FUNC_END__
-
-#define WDC_SECLOGI(format, args...)
-#define WDC_SECLOGD(format, args...)
-
-#endif /** _DLOG_UTIL */
+#include <stdbool.h>
+#include "wifi-direct.h"
 
 #define NETCONFIG_SERVICE		"net.netconfig"
 #define NETCONFIG_WIFI_INTERFACE	"net.netconfig.wifi"
@@ -68,6 +35,7 @@
 #define WIFI_DIRECT_WPA_LEN 64
 #define MACSTR_LEN 18
 #define MACADDR_LEN 6
+#define IPADDR_LEN 4
 #define IPSTR_LEN 16
 #define WFD_SOCK_FILE_PATH "/tmp/wfd_client_socket"
 
@@ -100,7 +68,7 @@ typedef struct
 	wifi_direct_device_state_changed_cb activation_cb;
 	wifi_direct_discovery_state_chagned_cb discover_cb;
 	wifi_direct_connection_state_changed_cb connection_cb;
-	wifi_direct_client_ip_address_assigned_cb ip_assigned_cb;	
+	wifi_direct_client_ip_address_assigned_cb ip_assigned_cb;
 	wifi_direct_peer_found_cb peer_found_cb;
 
 	void *user_data_for_cb_activation;
@@ -119,5 +87,41 @@ typedef struct
 } wifi_direct_client_info_s;
 
 extern char *wfd_debug_print(char *file, int line, char *format, ...);
+
+//Manage
+void wifi_direct_process_manage_activation(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+void wifi_direct_process_manage_deactivation(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+void wifi_direct_process_manage_connection(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+void wifi_direct_process_manage_disconnection(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+void wifi_direct_process_manage_peer_ip_assigned(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+void wifi_direct_process_manage_listen_started(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+void wifi_direct_process_manage_discovery_started(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+void wifi_direct_process_manage_discovery_finished(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+void wifi_direct_process_manage_peer_found(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+void wifi_direct_process_manage_peer_lost(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+
+//Group
+void wifi_direct_process_group_created(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+void wifi_direct_process_group_destroyed(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+
+//Service
+void wifi_direct_process_service_discovery_started(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+void wifi_direct_process_service_discovery_found(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
+void wifi_direct_process_service_discovery_finished(GDBusConnection *connection,
+		const gchar *object_path, GVariant *parameters);
 
 #endif /** __WIFI_DIRECT_CLIENT_PROXY_H_ */

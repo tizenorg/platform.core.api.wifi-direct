@@ -1,8 +1,8 @@
 Name:       capi-network-wifi-direct
 Summary:    Network WiFi-Direct Library
-Version:    1.2.46
+Version:    1.2.47
 Release:    1
-Group:      Network & Connectivity/Wireless
+Group:      Network & Connectivity/API
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 Requires(post): /sbin/ldconfig
@@ -29,7 +29,7 @@ Network WiFi-Direct library in Tizen CAPI (Shared Library) (Development)
 
 #%package -n test-wifi-direct
 #Summary:    Test Application for Wi-Fi Direct
-#Group:      TO_BE_FILLED
+#Group:      Network & Connectivity/Testing
 #Requires:   %{name} = %{version}-%{release}
 
 #%description -n test-wifi-direct
@@ -43,6 +43,8 @@ export ARCH=arm
 %else
 export ARCH=i586
 %endif
+
+chmod 644 %{SOURCE0}
 
 %build
 
@@ -98,5 +100,5 @@ cp %{_builddir}/%{buildsubdir}/LICENSE.APLv2 %{buildroot}/usr/share/license/%{na
 
 #%files -n test-wifi-direct
 #%manifest test-wifi-direct.manifest
-#%defattr(4755,app,app,4755)
-#%{_bindir}/test-wifi-direct
+#%defattr(-,app,app,-)
+#%attr(755,-,-) %{_bindir}/test-wifi-direct

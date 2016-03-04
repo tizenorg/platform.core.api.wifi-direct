@@ -106,6 +106,7 @@ SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed, --rpath=${LIBDIR}")
 # Build
 SET(SRCS
 	wifi-direct-client-proxy.c
+	wifi-direct-dbus.c
 )
 
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${SRCS})
