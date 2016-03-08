@@ -622,11 +622,6 @@ int wifi_direct_initialize(void)
 
 	wifi_direct_dbus_init();
 
-	WDC_LOGD("Launching wfd-server..\n");
-	res = __wfd_client_launch_server_dbus();
-	if (res != WIFI_DIRECT_ERROR_NONE)
-		WDC_LOGE("Failed to send dbus msg[%s]", strerror(errno));
-
 	g_client_info.is_registered = TRUE;
 
 	/* Initialize callbacks */
@@ -681,6 +676,8 @@ int wifi_direct_deinitialize(void)
 	g_client_info.service_cb = NULL;
 	g_client_info.user_data_for_cb_service = NULL;
 #endif /* TIZEN_FEATURE_SERVICE_DISCOVERY */
+
+	g_client_info.is_registered = FALSE;
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
@@ -2104,6 +2101,7 @@ int wifi_direct_activate_pushbutton(void)
 
 	GError* error = NULL;
 	GVariant *reply = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2124,10 +2122,12 @@ int wifi_direct_activate_pushbutton(void)
 	}
 	WDC_LOGD("%s() SUCCESS", __func__);
 
+	g_variant_get(reply, "(i)", &ret);
 	g_variant_unref(reply);
 
+	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
-	return WIFI_DIRECT_ERROR_NONE;
+	return ret;
 }
 
 int wifi_direct_set_wps_pin(char *pin)
@@ -2206,7 +2206,8 @@ int wifi_direct_get_wps_pin(char **pin)
 	}
 
 	g_variant_get(reply, "(i&s)", &ret, &str);
-	*pin = g_strdup(str);
+	if(pin != NULL && str != NULL)
+		*pin = g_strdup(str);
 	g_variant_unref(reply);
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
@@ -3546,6 +3547,13 @@ int wifi_direct_deregister_service(unsigned int service_id)
 int wifi_direct_init_miracast(bool enable)
 {
 	__WDC_LOG_FUNC_START__;
+	int ret = WIFI_DIRECT_ERROR_NONE;
+
+	if(enable)
+		ret = wifi_direct_init_display();
+	else
+		ret = wifi_direct_deinit_display();
+
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
 }
