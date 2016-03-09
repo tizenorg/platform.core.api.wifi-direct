@@ -220,9 +220,12 @@ void wifi_direct_process_manage_peer_ip_assigned(GDBusConnection *connection,
 		const gchar *object_path, GVariant *parameters)
 {
 	__WDC_LOG_FUNC_START__;
-	char *ifname = NULL;
+	char *get_str = NULL;
+	GError* error = NULL;
+	GVariant *reply = NULL;
 	const gchar *peer_mac_address = NULL;
 	const gchar *assigned_ip_address = NULL;
+	int ret = 0;
 	wifi_direct_client_info_s *client = __wfd_get_control();
 
 	if (!parameters) {
@@ -239,17 +242,27 @@ void wifi_direct_process_manage_peer_ip_assigned(GDBusConnection *connection,
 		return;
 	}
 
-	ifname = vconf_get_str(VCONFKEY_IFNAME);
-	if (!ifname) {
-		WDC_LOGD("vconf (%s) value is NULL!!!", VCONFKEY_IFNAME);
+	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_CONFIG_INTERFACE,
+						  "GetInterfaceName",
+						  NULL,
+						  &error);
+	if (error != NULL) {
+		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
+				"error [%d: %s]", error->code, error->message);
+		g_error_free(error);
+		__WDC_LOG_FUNC_END__;
 		return;
 	}
-	WDC_LOGD("VCONFKEY_IFNAME(%s) : %s", VCONFKEY_IFNAME, ifname);
 
-	client->ip_assigned_cb(peer_mac_address, assigned_ip_address, ifname,
+	g_variant_get(reply, "(i&s)", ret ,&get_str);
+	g_variant_unref(reply);
+
+	WDC_LOGD("Interface Name = [%s]", get_str);
+	WDC_LOGD("%s() return : [%d]", __func__, ret);
+
+	client->ip_assigned_cb(peer_mac_address, assigned_ip_address, get_str,
 			client->user_data_for_cb_ip_assigned);
 
-	g_free(ifname);
 	__WDC_LOG_FUNC_END__;
 }
 
@@ -681,6 +694,8 @@ int wifi_direct_deinitialize(void)
 	g_client_info.service_cb = NULL;
 	g_client_info.user_data_for_cb_service = NULL;
 #endif /* TIZEN_FEATURE_SERVICE_DISCOVERY */
+
+	g_client_info.is_registered = FALSE;
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
@@ -1887,7 +1902,7 @@ int wifi_direct_set_group_owner_intent(int intent)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -1931,7 +1946,7 @@ int wifi_direct_get_group_owner_intent(int *intent)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	int val = 0;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -1976,7 +1991,7 @@ int wifi_direct_set_max_clients(int max)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2015,7 +2030,7 @@ int wifi_direct_get_max_clients(int *max)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	int val = 0;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2060,7 +2075,7 @@ int wifi_direct_get_operating_channel(int *channel)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	int val = 0;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2104,6 +2119,7 @@ int wifi_direct_activate_pushbutton(void)
 
 	GError* error = NULL;
 	GVariant *reply = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2124,10 +2140,12 @@ int wifi_direct_activate_pushbutton(void)
 	}
 	WDC_LOGD("%s() SUCCESS", __func__);
 
+	g_variant_get(reply, "(i)", &ret);
 	g_variant_unref(reply);
 
+	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
-	return WIFI_DIRECT_ERROR_NONE;
+	return ret;
 }
 
 int wifi_direct_set_wps_pin(char *pin)
@@ -2139,7 +2157,7 @@ int wifi_direct_set_wps_pin(char *pin)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2185,7 +2203,7 @@ int wifi_direct_get_wps_pin(char **pin)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	const char *str = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2206,7 +2224,8 @@ int wifi_direct_get_wps_pin(char **pin)
 	}
 
 	g_variant_get(reply, "(i&s)", &ret, &str);
-	*pin = g_strdup(str);
+	if(pin != NULL && str != NULL)
+		*pin = g_strdup(str);
 	g_variant_unref(reply);
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
@@ -2223,7 +2242,7 @@ int wifi_direct_get_supported_wps_mode(int *wps_mode)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	int mode = 0;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2267,7 +2286,7 @@ int wifi_direct_foreach_supported_wps_types(wifi_direct_supported_wps_type_cb cb
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	int wps_mode = 0;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 	gboolean result = FALSE;
 
 	if (g_client_info.is_registered == false) {
@@ -2318,7 +2337,7 @@ int wifi_direct_get_local_wps_type(wifi_direct_wps_type_e *type)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	int mode = 0;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2362,7 +2381,7 @@ int wifi_direct_set_req_wps_type(wifi_direct_wps_type_e type)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2454,7 +2473,7 @@ int wifi_direct_get_ssid(char **ssid)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	const char *str = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2498,7 +2517,7 @@ int wifi_direct_get_device_name(char **device_name)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	const char *str = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2542,7 +2561,7 @@ int wifi_direct_set_device_name(const char *device_name)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2586,7 +2605,9 @@ int wifi_direct_get_network_interface_name(char **name)
 
 	wifi_direct_state_e status = 0;
 	char *get_str = NULL;
-	int ret = 0;
+	GError* error = NULL;
+	GVariant *reply = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2609,15 +2630,24 @@ int wifi_direct_get_network_interface_name(char **name)
 		return WIFI_DIRECT_ERROR_NOT_PERMITTED;
 	}
 
-	get_str = vconf_get_str(VCONFKEY_IFNAME);
-	if (!get_str) {
-		WDC_LOGD( "vconf (%s) value is NULL!!!\n", VCONFKEY_IFNAME);
+	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_CONFIG_INTERFACE,
+						  "GetInterfaceName",
+						  NULL,
+						  &error);
+	if (error != NULL) {
+		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
+				"error [%d: %s]", error->code, error->message);
+		g_error_free(error);
 		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_NOT_PERMITTED;
+		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
 	}
-	WDC_LOGD( "VCONFKEY_IFNAME(%s) : %s\n", VCONFKEY_IFNAME, get_str);
+
+	g_variant_get(reply, "(i&s)", ret ,&get_str);
 	*name = g_strdup(get_str);
-	g_free(get_str);
+	g_variant_unref(reply);
+
+	WDC_LOGD("Interface Name = [%s]", *name);
+	WDC_LOGD("%s() return : [%d]", __func__, ret);
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
@@ -2632,7 +2662,7 @@ int wifi_direct_get_ip_address(char **ip_address)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	const char *str = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2675,8 +2705,10 @@ int wifi_direct_get_subnet_mask(char **subnet_mask)
 	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_FEATURE);
 
 	wifi_direct_state_e status = 0;
+	GError* error = NULL;
+	GVariant *reply = NULL;
 	char *get_str = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2698,15 +2730,24 @@ int wifi_direct_get_subnet_mask(char **subnet_mask)
 		return WIFI_DIRECT_ERROR_NOT_PERMITTED;
 	}
 
-	get_str = vconf_get_str(VCONFKEY_SUBNET_MASK);
-	if (!get_str) {
-		WDC_LOGD("vconf (%s) value is NULL!!!", VCONFKEY_SUBNET_MASK);
+	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_CONFIG_INTERFACE,
+						  "GetSubnetMask",
+						  NULL,
+						  &error);
+	if (error != NULL) {
+		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
+				"error [%d: %s]", error->code, error->message);
+		g_error_free(error);
 		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_NOT_PERMITTED;
+		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
 	}
-	WDC_LOGD("VCONFKEY_SUBNET_MASK(%s) : %s", VCONFKEY_SUBNET_MASK, get_str);
+
+	g_variant_get(reply, "(i&s)", ret ,&get_str);
 	*subnet_mask = g_strdup(get_str);
-	g_free(get_str);
+	g_variant_unref(reply);
+
+	WDC_LOGD("Subnet Mask = [%s]", *subnet_mask);
+	WDC_LOGD("%s() return : [%d]", __func__, ret);
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
@@ -2719,8 +2760,10 @@ int wifi_direct_get_gateway_address(char **gateway_address)
 	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_FEATURE);
 
 	wifi_direct_state_e status = 0;
+	GError* error = NULL;
+	GVariant *reply = NULL;
 	char *get_str = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2742,15 +2785,24 @@ int wifi_direct_get_gateway_address(char **gateway_address)
 		return WIFI_DIRECT_ERROR_NOT_PERMITTED;
 	}
 
-	get_str = vconf_get_str(VCONFKEY_GATEWAY);
-	if (!get_str) {
-		WDC_LOGD("vconf (%s) value is NULL!!!", VCONFKEY_GATEWAY);
+	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_CONFIG_INTERFACE,
+						  "GetGateway",
+						  NULL,
+						  &error);
+	if (error != NULL) {
+		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
+				"error [%d: %s]", error->code, error->message);
+		g_error_free(error);
 		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_NOT_PERMITTED;
+		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
 	}
-	WDC_LOGD("VCONFKEY_GATEWAY(%s) : %s", VCONFKEY_GATEWAY, get_str);
+
+	g_variant_get(reply, "(i&s)", ret ,&get_str);
 	*gateway_address = g_strdup(get_str);
-	g_free(get_str);
+	g_variant_unref(reply);
+
+	WDC_LOGD("Gateway Address = [%s]", *gateway_address);
+	WDC_LOGD("%s() return : [%d]", __func__, ret);
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
@@ -2765,7 +2817,7 @@ int wifi_direct_get_mac_address(char **mac_address)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	const char *str = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2811,7 +2863,7 @@ int wifi_direct_get_state(wifi_direct_state_e *state)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	int val = 0;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -3002,7 +3054,7 @@ int wifi_direct_set_autoconnection_mode(bool mode)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -3040,7 +3092,7 @@ int wifi_direct_is_autoconnection_mode(bool *mode)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	bool val = FALSE;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -3323,7 +3375,7 @@ int wifi_direct_start_service_discovery(char *mac_address,
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered.");
@@ -3380,7 +3432,7 @@ int wifi_direct_cancel_service_discovery(char *mac_address,
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered.");
@@ -3436,7 +3488,7 @@ int wifi_direct_register_service(wifi_direct_service_type_e type, char *info1, c
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
 	char *buf = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 	int len = 0;
 
 	if (g_client_info.is_registered == false) {
@@ -3511,7 +3563,7 @@ int wifi_direct_deregister_service(unsigned int service_id)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered.");
@@ -3546,8 +3598,15 @@ int wifi_direct_deregister_service(unsigned int service_id)
 int wifi_direct_init_miracast(bool enable)
 {
 	__WDC_LOG_FUNC_START__;
+	int ret = WIFI_DIRECT_ERROR_NONE;
+
+	if(enable)
+		ret = wifi_direct_init_display();
+	else
+		ret = wifi_direct_deinit_display();
+
 	__WDC_LOG_FUNC_END__;
-	return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
+	return ret;
 }
 
 int wifi_direct_get_peer_info(char* mac_address, wifi_direct_discovered_peer_info_s** peer_info)
@@ -3719,7 +3778,7 @@ int wifi_direct_get_passphrase(char** passphrase)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	const char *val = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered.");
@@ -3763,7 +3822,7 @@ int wifi_direct_set_autoconnection_peer(char *mac_address)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered.");
@@ -3807,7 +3866,7 @@ int wifi_direct_init_display(void)
 
 	GError* error = NULL;
 	GVariant *reply = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered.");
@@ -3847,7 +3906,7 @@ int wifi_direct_deinit_display(void)
 
 	GError* error = NULL;
 	GVariant *reply = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -3888,7 +3947,7 @@ int wifi_direct_set_display(wifi_direct_display_type_e type, int port, int hdcp)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -3938,7 +3997,7 @@ int wifi_direct_set_display_availability(bool availability)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered.");
@@ -3982,7 +4041,7 @@ int wifi_direct_get_peer_display_type(char *mac_address, wifi_direct_display_typ
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
 	int val = 0;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -4032,7 +4091,7 @@ int wifi_direct_get_peer_display_availability(char *mac_address, bool *availabil
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
 	int val = 0;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -4082,7 +4141,7 @@ int wifi_direct_get_peer_display_hdcp(char *mac_address, int *hdcp)
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
 	int val = 0;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -4132,7 +4191,7 @@ int wifi_direct_get_peer_display_port(char *mac_address, int *port)
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
 	int val = 0;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -4182,7 +4241,7 @@ int wifi_direct_get_peer_display_throughput(char *mac_address, int *throughput)
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
 	int val = 0;
-	int ret = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
