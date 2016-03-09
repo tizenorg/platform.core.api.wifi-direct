@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __WIFI_DIRECT_IPC_H__
-#define __WIFI_DIRECT_IPC_H__
+#ifndef __WIFI_DIRECT_IPC_H_
+#define __WIFI_DIRECT_IPC_H_
 
 #define true 1
 #define false 0
@@ -59,7 +59,6 @@ typedef unsigned int ipv4_addr_t;
 #define WIFI_DIRECT_MAX_SSID_LEN 32
 #define WIFI_DIRECT_MAX_DEVICE_NAME_LEN 32
 #define WIFI_DIRECT_WPS_PIN_LEN 8
-#define WIFI_DIRECT_MAC_ADDRESS_INFO_FILE "/opt/etc/.mac.info"
 #define WIFI_DIRECT_MAX_SERVICES_LEN 1024
 #define WIFI_DIRECT_MAX_SERVICE_NAME_LEN 256
 
@@ -314,4 +313,4 @@ typedef struct
 } wifi_direct_client_noti_s;
 
 
-#endif	/* __WIFI_DIRECT_IPC_H__ */
+#endif	/* __WIFI_DIRECT_IPC_H_ */
