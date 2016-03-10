@@ -628,12 +628,16 @@ int wifi_direct_initialize(void)
 		return res;
 	}
 
-	if(!wifi_direct_enable) {
+	if (!wifi_direct_enable) {
 		WDC_LOGE("Wi-Fi Direct not supported");
 		return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
 	}
 
-	wifi_direct_dbus_init();
+	if (wifi_direct_dbus_init() == FALSE) {
+		WDC_LOGW("Failed to initialize dbus");
+		__WDC_LOG_FUNC_END__;
+		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+	}
 
 	WDC_LOGD("Launching wfd-server..\n");
 	res = __wfd_client_launch_server_dbus();
