@@ -1086,7 +1086,6 @@ int wifi_direct_start_discovery(bool listen_only, int timeout)
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "StartDiscovery", params, &error);
-	WDC_LOGE("params [%s]", reply?g_variant_print(reply, TRUE):"NULL");
 	if (error != NULL) {
 		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
 				"error [%d: %s]", error->code, error->message);
@@ -1138,7 +1137,6 @@ int wifi_direct_start_discovery_specific_channel(bool listen_only,
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "StartDiscovery", params, &error);
-	WDC_LOGE("params [%s]", reply?g_variant_print(reply, TRUE):"NULL");
 	if (error != NULL) {
 		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
 				"error [%d: %s]", error->code, error->message);

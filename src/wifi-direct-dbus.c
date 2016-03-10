@@ -135,7 +135,7 @@ static void _wifi_direct_dbus_signal_cb(GDBusConnection *connection,
 	int i = 0;
 
 	WDC_LOGD("Signal Name [%s]", signal);
-	WDC_LOGD("Signal Parameters [%s]", parameters ? g_variant_print(parameters, TRUE) : "NULL");
+	DBUS_DEBUG_VARIANT(parameters);
 
 	for (i = 0; wifi_direct_dbus_signal_map[i].member != NULL; i++) {
 		if (!g_strcmp0(signal, wifi_direct_dbus_signal_map[i].member) &&
@@ -161,7 +161,7 @@ GVariant *wifi_direct_dbus_method_call_sync_debug(const char* interface_name,
 	}
 
 	WDC_LOGD("[%s][%s.%s]", calling_func, interface_name, method);
-	WDC_LOGD("Sent Parameters: [%s]", params ? g_variant_print(params, TRUE) : "NULL");
+	DBUS_DEBUG_VARIANT(params);
 
 	reply = g_dbus_connection_call_sync(gdbus_conn.connection,
 					    WFD_MANAGER_SERVICE, /* bus name */
@@ -174,8 +174,7 @@ GVariant *wifi_direct_dbus_method_call_sync_debug(const char* interface_name,
 					    WIFI_DIRECT_DBUS_REPLY_TIMEOUT_SYNC, /* timeout */
 					    NULL, /* cancellable */
 					    error); /* error */
-
-	WDC_LOGD("Received Reply : %s\n", reply ? g_variant_print(reply, TRUE) : "NULL");
+	DBUS_DEBUG_VARIANT(reply);
 	return reply;
 }
 
