@@ -2209,6 +2209,12 @@ int wifi_direct_get_wps_pin(char **pin)
 		return WIFI_DIRECT_ERROR_NOT_INITIALIZED;
 	}
 
+	if (!pin) {
+		WDC_LOGE("NULL Param [pin]!");
+		__WDC_LOG_FUNC_END__;
+		return WIFI_DIRECT_ERROR_INVALID_PARAMETER;
+	}
+
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_CONFIG_INTERFACE,
 					  "GetWpsPin",
 					  NULL,
