@@ -563,49 +563,6 @@ void __wfd_client_print_persistent_group_info(wfd_persistent_group_info_s *list,
 	WDC_LOGD("------------------------------------------\n");
 }
 
-static int __wfd_client_launch_server_dbus(void)
-{
-	GDBusConnection *netconfig_bus = NULL;
-	GError *g_error = NULL;
-
-#if !GLIB_CHECK_VERSION(2,36,0)
-	g_type_init();
-#endif
-	netconfig_bus = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, &g_error);
-	if (netconfig_bus == NULL) {
-		if(g_error != NULL) {
-			WDC_LOGE("Couldn't connect to system bus "
-					"error [%d: %s]", g_error->code, g_error->message);
-			g_error_free(g_error);
-		}
-		return WIFI_DIRECT_ERROR_COMMUNICATION_FAILED;
-	}
-
-	g_dbus_connection_call_sync(netconfig_bus,
-			NETCONFIG_SERVICE,
-			NETCONFIG_WIFI_PATH,
-			NETCONFIG_WIFI_INTERFACE,
-			NETCONFIG_WIFI_LAUNCHDIRECT,
-			NULL,
-			NULL,
-			G_DBUS_CALL_FLAGS_NONE,
-			DBUS_REPLY_TIMEOUT,
-			NULL,
-			&g_error);
-
-	if(g_error !=NULL) {
-		WDC_LOGE("g_dbus_connection_call_sync() failed"
-				"error [%d: %s]", g_error->code, g_error->message);
-		g_error_free(g_error);
-		return WIFI_DIRECT_ERROR_PERMISSION_DENIED;
-	}
-
-	g_object_unref(netconfig_bus);
-
-	WDC_LOGD("Successfully launched wfd-manager");
-	return WIFI_DIRECT_ERROR_NONE;
-}
-
 int wifi_direct_initialize(void)
 {
 	__WDC_LOG_FUNC_START__;
@@ -638,11 +595,6 @@ int wifi_direct_initialize(void)
 		__WDC_LOG_FUNC_END__;
 		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
 	}
-
-	WDC_LOGD("Launching wfd-server..\n");
-	res = __wfd_client_launch_server_dbus();
-	if (res != WIFI_DIRECT_ERROR_NONE)
-		WDC_LOGE("Failed to send dbus msg[%s]", strerror(errno));
 
 	g_client_info.is_registered = TRUE;
 

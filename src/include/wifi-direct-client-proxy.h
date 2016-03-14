@@ -25,12 +25,6 @@
 #include <stdbool.h>
 #include "wifi-direct.h"
 
-#define NETCONFIG_SERVICE		"net.netconfig"
-#define NETCONFIG_WIFI_INTERFACE	"net.netconfig.wifi"
-#define NETCONFIG_WIFI_PATH		"/net/netconfig/wifi"
-#define NETCONFIG_WIFI_LAUNCHDIRECT	"LaunchDirect"
-#define DBUS_REPLY_TIMEOUT (120 * 1000)
-
 #define SOCK_FD_MIN 3
 #define WIFI_DIRECT_WPA_LEN 64
 #define MACSTR_LEN 18

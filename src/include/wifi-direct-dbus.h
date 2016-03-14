@@ -75,4 +75,4 @@ int wifi_direct_dbus_unpack_ay(unsigned char *dst, GVariant *src, int size);
 }
 #endif
 
-#endif /* __NETCONFIG_NETDBUS_H__ */
+#endif /* __WIFI_DIRECT_DBUS_H__ */
