@@ -1152,6 +1152,7 @@ static char **get_service_list(char *services, unsigned int *count)
 	unsigned int cnt = 0;
 	unsigned int i = 0;
 	unsigned int j = 0;
+	char *saveptr = NULL;
 
 	if (!count || !services || (services && strlen(services) <= 0)) {
 		WDC_LOGE("Invalid parameters.");
@@ -1162,10 +1163,10 @@ static char **get_service_list(char *services, unsigned int *count)
 	pos1 = services;
 	pos2 = g_strdup(services);
 
-	pos1 = strtok (pos1,",\n");
+	pos1 = strtok_r (pos1,",\n", &saveptr);
 	while (pos1) {
 		cnt++;
-		pos1 = strtok (NULL, ",\n");
+		pos1 = strtok_r (NULL, ",\n", &saveptr);
 	}
 	WDC_LOGD("Total Service Count = %d", cnt);
 
