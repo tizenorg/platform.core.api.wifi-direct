@@ -1177,13 +1177,13 @@ static char **get_service_list(char *services, unsigned int *count)
 			g_free(pos2);
 			return NULL;
 		}
-		pos2 = strtok (pos2,",\n");
+		pos2 = strtok_r (pos2,",\n", &saveptr);
 		while (pos2 != NULL) {
 			char *s = strchr(pos2, ' ');
 			if (s) {
 				*s = '\0';
 				result[i++] = strdup(pos2);
-				pos2 = strtok (NULL, ",\n");
+				pos2 = strtok_r (NULL, ",\n", &saveptr);
 			}
 		}
 	}
