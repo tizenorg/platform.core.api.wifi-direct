@@ -100,6 +100,38 @@ static wifi_direct_client_info_s *__wfd_get_control()
 	return &g_client_info;
 }
 
+static int __net_wifidirect_gerror_to_enum(GError* error)
+{
+	int ret = WIFI_DIRECT_ERROR_NONE;
+	if(error == NULL) {
+		WDC_LOGI("GError is NULL!!");
+		return ret;
+	}
+
+	WDC_LOGE("wifi_direct_dbus_method_call_sync() failed. error [%d: %s]",
+			error->code, error->message);
+
+	if(NULL == strstr(error->message, "net.wifidirect.Error")) {
+		if (NULL != strstr(error->message, ".PermissionDenied"))
+			ret = WIFI_DIRECT_ERROR_PERMISSION_DENIED;
+		else
+			ret = WIFI_DIRECT_ERROR_OPERATION_FAILED;
+	} else {
+		if (NULL != strstr(error->message, "InvalidParameter"))
+			ret = WIFI_DIRECT_ERROR_INVALID_PARAMETER;
+		else if (NULL != strstr(error->message, "NotPermitted"))
+			ret = WIFI_DIRECT_ERROR_NOT_PERMITTED;
+		else if (NULL != strstr(error->message, "OperationFailed"))
+			ret = WIFI_DIRECT_ERROR_OPERATION_FAILED;
+		else if (NULL != strstr(error->message, "TooManyClient"))
+			ret = WIFI_DIRECT_ERROR_TOO_MANY_CLIENT;
+		else
+			ret = WIFI_DIRECT_ERROR_OPERATION_FAILED;
+	}
+	g_error_free(error);
+	return ret;
+}
+
 /* Manage */
 void wifi_direct_process_manage_activation(GDBusConnection *connection,
 		const gchar *object_path, GVariant *parameters)
@@ -569,7 +601,10 @@ int wifi_direct_initialize(void)
 
 	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_FEATURE);
 
+	GError* error = NULL;
+	GVariant *reply = NULL;
 	bool wifi_direct_enable;
+	int state = 0;
 	int res = 0;
 
 	if (g_client_info.is_registered == TRUE) {
@@ -595,6 +630,17 @@ int wifi_direct_initialize(void)
 		__WDC_LOG_FUNC_END__;
 		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
 	}
+
+	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
+						  "GetState", NULL, &error);
+
+	res = __net_wifidirect_gerror_to_enum(error);
+	if(res != WIFI_DIRECT_ERROR_NONE) {
+		return res;
+	}
+
+	g_variant_get(reply, "(ii)", &res, &state);
+	WDC_LOGD("State = [%d]", state);
 
 	g_client_info.is_registered = TRUE;
 
@@ -961,16 +1007,12 @@ int wifi_direct_activate(void)
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						    "Activate", NULL, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -994,16 +1036,12 @@ int wifi_direct_deactivate(void)
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "Deactivate", NULL, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1042,16 +1080,12 @@ int wifi_direct_start_discovery(bool listen_only, int timeout)
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "StartDiscovery", params, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1093,16 +1127,12 @@ int wifi_direct_start_discovery_specific_channel(bool listen_only,
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "StartDiscovery", params, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1126,16 +1156,12 @@ int wifi_direct_cancel_discovery(void)
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "StopDiscovery", NULL, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1236,12 +1262,10 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb cb,
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "GetDiscoveredPeers", params, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret!= WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(iaa{sv})", &ret, &iter_peers);
@@ -1350,16 +1374,12 @@ int wifi_direct_connect(char *mac_address)
 	params = g_variant_new("(s)", mac_address);
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "Connect", params, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1392,16 +1412,12 @@ int wifi_direct_cancel_connection(char *mac_address)
 	params = g_variant_new("(s)", mac_address);
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "CancelConnection", params, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1435,16 +1451,12 @@ int wifi_direct_reject_connection(char *mac_address)
 	params = g_variant_new("(s)", mac_address);
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "RejectConnection", params, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1470,16 +1482,12 @@ int wifi_direct_disconnect_all(void)
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "DisconnectAll", NULL, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1513,16 +1521,12 @@ int wifi_direct_disconnect(char *mac_address)
 	params = g_variant_new("(s)", mac_address);
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "Disconnect", params, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1555,16 +1559,12 @@ int wifi_direct_accept_connection(char *mac_address)
 	params = g_variant_new("(s)", mac_address);
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "AcceptConnection", params, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1602,12 +1602,10 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "GetConnectedPeers", params, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(iaa{sv})", &ret, &iter_peers);
@@ -1711,16 +1709,12 @@ int wifi_direct_create_group(void)
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_GROUP_INTERFACE,
 						  "CreateGroup", NULL, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1746,16 +1740,12 @@ int wifi_direct_destroy_group(void)
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_GROUP_INTERFACE,
 						  "DestroyGroup", NULL, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1771,6 +1761,7 @@ int wifi_direct_is_group_owner(bool *owner)
 
 	GError* error = NULL;
 	GVariant *reply = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 	bool val;
 
 	if (g_client_info.is_registered == false) {
@@ -1789,13 +1780,12 @@ int wifi_direct_is_group_owner(bool *owner)
 					  "IsGroupOwner",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
+
 	WDC_LOGD("%s() SUCCESS", __func__);
 	g_variant_get(reply, "(b)", &val);
 	*owner = val;
@@ -1813,6 +1803,7 @@ int wifi_direct_is_autonomous_group(bool *autonomous_group)
 
 	GError* error = NULL;
 	GVariant *reply = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 	bool val;
 
 	if (g_client_info.is_registered == false) {
@@ -1831,13 +1822,12 @@ int wifi_direct_is_autonomous_group(bool *autonomous_group)
 					  "IsAutoGroup",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
+
 	WDC_LOGD("%s() SUCCESS", __func__);
 	g_variant_get(reply, "(b)", &val);
 	*autonomous_group = val;
@@ -1876,16 +1866,12 @@ int wifi_direct_set_group_owner_intent(int intent)
 					  "SetGoIntent",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -1919,12 +1905,10 @@ int wifi_direct_get_group_owner_intent(int *intent)
 					  "GetGoIntent",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
@@ -1960,16 +1944,12 @@ int wifi_direct_set_max_clients(int max)
 					  "SetMaxClient",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -2003,12 +1983,10 @@ int wifi_direct_get_max_clients(int *max)
 					  "GetMaxClient",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
@@ -2048,12 +2026,10 @@ int wifi_direct_get_operating_channel(int *channel)
 					  "GetOperatingChannel",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
@@ -2086,17 +2062,12 @@ int wifi_direct_activate_pushbutton(void)
 					  "ActivatePushButton",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
-	WDC_LOGD("%s() SUCCESS", __func__);
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -2132,16 +2103,12 @@ int wifi_direct_set_wps_pin(char *pin)
 					  "SetWpsPin",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -2176,12 +2143,10 @@ int wifi_direct_get_wps_pin(char **pin)
 					  "GetWpsPin",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(i&s)", &ret, &str);
@@ -2221,12 +2186,10 @@ int wifi_direct_get_supported_wps_mode(int *wps_mode)
 					  "GetSupportedWpsMode",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &mode);
@@ -2266,12 +2229,10 @@ int wifi_direct_foreach_supported_wps_types(wifi_direct_supported_wps_type_cb cb
 					  "GetSupportedWpsMode",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &wps_mode);
@@ -2316,12 +2277,10 @@ int wifi_direct_get_local_wps_type(wifi_direct_wps_type_e *type)
 					  "GetLocalWpsMode",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &mode);
@@ -2365,16 +2324,12 @@ int wifi_direct_set_req_wps_type(wifi_direct_wps_type_e type)
 					  "SetReqWpsMode",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -2408,12 +2363,10 @@ int wifi_direct_get_req_wps_type(wifi_direct_wps_type_e *type)
 					  "GetReqWpsMode",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &mode);
@@ -2452,12 +2405,10 @@ int wifi_direct_get_ssid(char **ssid)
 					  "GetDeviceName",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(i&s)", &ret, &str);
@@ -2496,12 +2447,10 @@ int wifi_direct_get_device_name(char **device_name)
 					  "GetDeviceName",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(i&s)", &ret, &str);
@@ -2542,16 +2491,12 @@ int wifi_direct_set_device_name(const char *device_name)
 					  "SetDeviceName",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -2595,12 +2540,10 @@ int wifi_direct_get_network_interface_name(char **name)
 						  "GetInterfaceName",
 						  NULL,
 						  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(i&s)", ret ,&get_str);
@@ -2641,12 +2584,10 @@ int wifi_direct_get_ip_address(char **ip_address)
 						  "GetIPAddress",
 						  NULL,
 						  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(i&s)", ret ,&str);
@@ -2695,12 +2636,10 @@ int wifi_direct_get_subnet_mask(char **subnet_mask)
 						  "GetSubnetMask",
 						  NULL,
 						  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(i&s)", ret ,&get_str);
@@ -2750,12 +2689,10 @@ int wifi_direct_get_gateway_address(char **gateway_address)
 						  "GetGateway",
 						  NULL,
 						  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(i&s)", ret ,&get_str);
@@ -2796,12 +2733,10 @@ int wifi_direct_get_mac_address(char **mac_address)
 					  "GetMacAddress",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(i&s)", &ret, &str);
@@ -2840,12 +2775,10 @@ int wifi_direct_get_state(wifi_direct_state_e *state)
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "GetState", NULL, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
@@ -2871,6 +2804,7 @@ int wifi_direct_is_discoverable(bool* discoverable)
 
 	GError* error = NULL;
 	GVariant *reply = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2886,12 +2820,10 @@ int wifi_direct_is_discoverable(bool* discoverable)
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "IsDiscoverable", NULL, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(b)", discoverable);
@@ -2912,6 +2844,7 @@ int wifi_direct_is_listening_only(bool* listen_only)
 
 	GError* error = NULL;
 	GVariant *reply = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -2927,12 +2860,10 @@ int wifi_direct_is_listening_only(bool* listen_only)
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "IsListeningOnly", NULL, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(b)", listen_only);
@@ -3028,16 +2959,12 @@ int wifi_direct_set_autoconnection_mode(bool mode)
 					  "SetAutoConnectionMode",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -3071,12 +2998,10 @@ int wifi_direct_is_autoconnection_mode(bool *mode)
 					  "IsAutoConnectionMode",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ib)", &ret, &val);
@@ -3098,6 +3023,7 @@ int wifi_direct_set_persistent_group_enabled(bool enabled)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -3110,16 +3036,14 @@ int wifi_direct_set_persistent_group_enabled(bool enabled)
 					  "SetPersistentGroupEnabled",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
-	WDC_LOGD("%s() SUCCESS", __func__);
 
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
+
+	WDC_LOGD("%s() return : [%d]", __func__, ret);
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
@@ -3134,6 +3058,7 @@ int wifi_direct_is_persistent_group_enabled(bool *enabled)
 
 	GError* error = NULL;
 	GVariant *reply = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 	bool val;
 
 	if (g_client_info.is_registered == false) {
@@ -3152,13 +3077,12 @@ int wifi_direct_is_persistent_group_enabled(bool *enabled)
 					  "IsPersistentGroupEnabled",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
+
 	WDC_LOGD("%s() SUCCESS", __func__);
 	g_variant_get(reply, "(b)", &val);
 	*enabled = val;
@@ -3198,12 +3122,10 @@ int wifi_direct_foreach_persistent_groups(wifi_direct_persistent_group_cb cb,
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_GROUP_INTERFACE,
 						  "GetPersistentGroups", params, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(iaa{sv})", &ret, &iter_groups);
@@ -3258,6 +3180,7 @@ int wifi_direct_remove_persistent_group(char *mac_address, const char *ssid)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered");
@@ -3276,16 +3199,14 @@ int wifi_direct_remove_persistent_group(char *mac_address, const char *ssid)
 					  "RemovePersistentGroup",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
-	WDC_LOGD("%s() SUCCESS", __func__);
 
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
+
+	WDC_LOGD("%s() return : [%d]", __func__, ret);
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
@@ -3362,16 +3283,12 @@ int wifi_direct_start_service_discovery(char *mac_address,
 						    "StartDiscovery",
 						    params,
 						    &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -3419,16 +3336,12 @@ int wifi_direct_cancel_service_discovery(char *mac_address,
 						    "StopDiscovery",
 						    params,
 						    &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -3495,12 +3408,10 @@ int wifi_direct_register_service(wifi_direct_service_type_e type, char *info1, c
 						    "Register",
 						    params,
 						    &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, service_id);
@@ -3537,16 +3448,12 @@ int wifi_direct_deregister_service(unsigned int service_id)
 						    "Deregister",
 						    params,
 						    &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -3605,12 +3512,10 @@ int wifi_direct_get_peer_info(char* mac_address, wifi_direct_discovered_peer_inf
 	params = g_variant_new("(s)", mac_address);
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "GetPeerInfo", params, &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ia{sv})", &ret, &iter_peer);
@@ -3696,6 +3601,7 @@ int wifi_direct_set_passphrase(const char *passphrase)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
 
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is NOT registered.");
@@ -3715,16 +3621,14 @@ int wifi_direct_set_passphrase(const char *passphrase)
 					  "SetPassphrase",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
-	WDC_LOGD("%s() SUCCESS", __func__);
 
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
+
+	WDC_LOGD("%s() SUCCESS", __func__);
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
@@ -3757,13 +3661,12 @@ int wifi_direct_get_passphrase(char** passphrase)
 					  "GetPassphrase",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
+
 	WDC_LOGD("%s() SUCCESS", __func__);
 	g_variant_get(reply, "(i&s)", &ret, &val);
 	*passphrase = g_strdup(val);
@@ -3802,16 +3705,12 @@ int wifi_direct_set_autoconnection_peer(char *mac_address)
 					  "SetAutoConnectionPeer",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -3839,16 +3738,12 @@ int wifi_direct_init_display(void)
 					  "Init",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -3879,16 +3774,12 @@ int wifi_direct_deinit_display(void)
 					  "Deinit",
 					  NULL,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -3929,16 +3820,12 @@ int wifi_direct_set_display(wifi_direct_display_type_e type, int port, int hdcp)
 					  "SetConfig",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -3972,16 +3859,12 @@ int wifi_direct_set_display_availability(bool availability)
 					  "SetAvailiability",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
-	}
 
-	g_variant_get(reply, "(i)", &ret);
-	g_variant_unref(reply);
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
@@ -4021,12 +3904,10 @@ int wifi_direct_get_peer_display_type(char *mac_address, wifi_direct_display_typ
 					  "GetPeerType",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
@@ -4071,12 +3952,10 @@ int wifi_direct_get_peer_display_availability(char *mac_address, bool *availabil
 					  "GetPeerAvailability",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
@@ -4121,12 +4000,10 @@ int wifi_direct_get_peer_display_hdcp(char *mac_address, int *hdcp)
 					  "GetPeerHdcp",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
@@ -4171,12 +4048,10 @@ int wifi_direct_get_peer_display_port(char *mac_address, int *port)
 					  "GetPeerPort",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
@@ -4221,12 +4096,10 @@ int wifi_direct_get_peer_display_throughput(char *mac_address, int *throughput)
 					  "GetPeerThroughput",
 					  params,
 					  &error);
-	if (error != NULL) {
-		WDC_LOGE("wifi_direct_dbus_method_call_sync() failed."
-				"error [%d: %s]", error->code, error->message);
-		g_error_free(error);
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
