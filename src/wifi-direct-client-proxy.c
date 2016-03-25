@@ -3411,11 +3411,16 @@ int wifi_direct_register_service(wifi_direct_service_type_e type, char *info1, c
 
 	ret = __net_wifidirect_gerror_to_enum(error);
 	if(ret != WIFI_DIRECT_ERROR_NONE) {
+		if (buf)
+			g_free(buf);
+
 		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, service_id);
 	g_variant_unref(reply);
+	if (buf)
+		g_free(buf);
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
