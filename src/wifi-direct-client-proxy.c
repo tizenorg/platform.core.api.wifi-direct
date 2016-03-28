@@ -112,10 +112,13 @@ static int __net_wifidirect_gerror_to_enum(GError* error)
 			error->code, error->message);
 
 	if(NULL == strstr(error->message, "net.wifidirect.Error")) {
-		if (NULL != strstr(error->message, ".PermissionDenied"))
+		if (NULL != strstr(error->message, ".AccessDenied")) {
+			WDC_LOGE("Client doesn't have wifidirect privilege");
 			ret = WIFI_DIRECT_ERROR_PERMISSION_DENIED;
-		else
+		} else {
+			WDC_LOGE("DBus failure");
 			ret = WIFI_DIRECT_ERROR_OPERATION_FAILED;
+		}
 	} else {
 		if (NULL != strstr(error->message, "InvalidParameter"))
 			ret = WIFI_DIRECT_ERROR_INVALID_PARAMETER;
