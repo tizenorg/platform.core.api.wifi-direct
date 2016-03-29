@@ -156,8 +156,8 @@ GVariant *wifi_direct_dbus_method_call_sync_debug(const char* interface_name,
 	GVariant *reply = NULL;
 
 	if (gdbus_conn.connection == NULL) {
-		WDC_LOGE("GDBusconnection is NULL");
-		return reply;
+		WDC_LOGE("GDBusconnection is NULL"); //LCOV_EXCL_LINE
+		return reply; //LCOV_EXCL_LINE
 	}
 
 	WDC_LOGD("[%s][%s.%s]", calling_func, interface_name, method);
@@ -186,8 +186,8 @@ gboolean wifi_direct_dbus_init(void)
 	connection = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, &Error);
 	if(connection == NULL) {
 		WDC_LOGE("Failed to get connection, Error[%s]", Error->message);
-		g_error_free(Error);
-		return FALSE;
+		g_error_free(Error); //LCOV_EXCL_LINE
+		return FALSE; //LCOV_EXCL_LINE
 	}
 
 	gdbus_conn.connection = connection;
@@ -221,6 +221,7 @@ void wifi_direct_dbus_deinit(void)
 	gdbus_conn.connection = NULL;
 }
 
+//LCOV_EXCL_START
 int wifi_direct_dbus_unpack_ay(unsigned char *dst, GVariant *src, int size)
 {
 	GVariantIter *iter = NULL;
@@ -251,3 +252,4 @@ int wifi_direct_dbus_unpack_ay(unsigned char *dst, GVariant *src, int size)
 
 	return rv;
 }
+//LCOV_EXCL_STOP

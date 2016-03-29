@@ -112,6 +112,7 @@ static int __net_wifidirect_gerror_to_enum(GError* error)
 			error->code, error->message);
 
 	if(NULL == strstr(error->message, "net.wifidirect.Error")) {
+//LCOV_EXCL_START
 		if (NULL != strstr(error->message, ".AccessDenied")) {
 			WDC_LOGE("Client doesn't have wifidirect privilege");
 			ret = WIFI_DIRECT_ERROR_PERMISSION_DENIED;
@@ -119,6 +120,7 @@ static int __net_wifidirect_gerror_to_enum(GError* error)
 			WDC_LOGE("DBus failure");
 			ret = WIFI_DIRECT_ERROR_OPERATION_FAILED;
 		}
+//LCOV_EXCL_STOP
 	} else {
 		if (NULL != strstr(error->message, "InvalidParameter"))
 			ret = WIFI_DIRECT_ERROR_INVALID_PARAMETER;
@@ -126,10 +128,12 @@ static int __net_wifidirect_gerror_to_enum(GError* error)
 			ret = WIFI_DIRECT_ERROR_NOT_PERMITTED;
 		else if (NULL != strstr(error->message, "OperationFailed"))
 			ret = WIFI_DIRECT_ERROR_OPERATION_FAILED;
+//LCOV_EXCL_START
 		else if (NULL != strstr(error->message, "TooManyClient"))
 			ret = WIFI_DIRECT_ERROR_TOO_MANY_CLIENT;
 		else
 			ret = WIFI_DIRECT_ERROR_OPERATION_FAILED;
+//LCOV_EXCL_STOP
 	}
 	g_error_free(error);
 	return ret;
@@ -145,7 +149,7 @@ void wifi_direct_process_manage_activation(GDBusConnection *connection,
 
 	if (!client->activation_cb) {
 		WDC_LOGI("activation_cb is NULL!!");
-		return;
+		return; //LCOV_EXCL_LINE
 	}
 
 	if (!parameters) {
@@ -171,7 +175,7 @@ void wifi_direct_process_manage_deactivation(GDBusConnection *connection,
 
 	if (!parameters) {
 		__WDC_LOG_FUNC_END__;
-		return;
+		return; //LCOV_EXCL_LINE
 	}
 
 	if (!client->activation_cb) {
@@ -189,6 +193,7 @@ void wifi_direct_process_manage_deactivation(GDBusConnection *connection,
 	__WDC_LOG_FUNC_END__;
 }
 
+//LCOV_EXCL_START
 void wifi_direct_process_manage_connection(GDBusConnection *connection,
 		const gchar *object_path, GVariant *parameters)
 {
@@ -597,6 +602,7 @@ void __wfd_client_print_persistent_group_info(wfd_persistent_group_info_s *list,
 	}
 	WDC_LOGD("------------------------------------------\n");
 }
+//LCOV_EXCL_STOP
 
 int wifi_direct_initialize(void)
 {
@@ -620,18 +626,18 @@ int wifi_direct_initialize(void)
 	if (res < 0) {
 		WDC_LOGE("Failed to get sys info");
 		__WDC_LOG_FUNC_END__;
-		return res;
+		return res; //LCOV_EXCL_LINE
 	}
 
 	if (!wifi_direct_enable) {
 		WDC_LOGE("Wi-Fi Direct not supported");
-		return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
+		return WIFI_DIRECT_ERROR_NOT_SUPPORTED; //LCOV_EXCL_LINE
 	}
 
 	if (wifi_direct_dbus_init() == FALSE) {
 		WDC_LOGW("Failed to initialize dbus");
 		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+		return WIFI_DIRECT_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 	}
 
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
@@ -855,6 +861,7 @@ int wifi_direct_set_service_state_changed_cb(wifi_direct_service_state_changed_c
 
 	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_SERVICE_DISCOVERY_FEATURE);
 
+//LCOV_EXCL_START
 	if (!cb) {
 		WDC_LOGE("Callback is NULL.");
 		__WDC_LOG_FUNC_END__;
@@ -872,6 +879,7 @@ int wifi_direct_set_service_state_changed_cb(wifi_direct_service_state_changed_c
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
+//LCOV_EXCL_STOP
 #else /* TIZEN_FEATURE_SERVICE_DISCOVERY */
 	return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
 #endif /* TIZEN_FEATURE_SERVICE_DISCOVERY */
@@ -885,6 +893,7 @@ int wifi_direct_unset_service_state_changed_cb(void)
 
 	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_SERVICE_DISCOVERY_FEATURE);
 
+//LCOV_EXCL_START
 	if (g_client_info.is_registered == false) {
 		WDC_LOGE("Client is not initialized.");
 		__WDC_LOG_FUNC_END__;
@@ -896,6 +905,7 @@ int wifi_direct_unset_service_state_changed_cb(void)
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
+//LCOV_EXCL_STOP
 #else /* TIZEN_FEATURE_SERVICE_DISCOVERY */
 	return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
 #endif /* TIZEN_FEATURE_SERVICE_DISCOVERY */
@@ -1171,7 +1181,7 @@ int wifi_direct_cancel_discovery(void)
 	return ret;
 }
 
-#ifdef TIZEN_FEATURE_SERVICE_DISCOVERY
+#if 0
 static char **get_service_list(char *services, unsigned int *count)
 {
 	__WDC_LOG_FUNC_START__;
@@ -1278,7 +1288,7 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb cb,
 	}
 
 	WDC_LOGD("wifi_direct_foreach_discovered_peers() SUCCESS");
-
+//LCOV_EXCL_START
 	while(g_variant_iter_loop(iter_peers, "a{sv}", &iter_peer)) {
 		wifi_direct_discovered_peer_info_s *peer_list = NULL;
 
@@ -1344,7 +1354,7 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb cb,
 			break;
 		}
 	}
-
+//LCOV_EXCL_STOP
 	g_variant_iter_free(iter_peers);
 	g_variant_unref(reply);
 	__WDC_LOG_FUNC_END__;
@@ -1389,6 +1399,7 @@ int wifi_direct_connect(char *mac_address)
 	return ret;
 }
 
+//LCOV_EXCL_START
 int wifi_direct_cancel_connection(char *mac_address)
 {
 	__WDC_LOG_FUNC_START__;
@@ -1465,7 +1476,7 @@ int wifi_direct_reject_connection(char *mac_address)
 	__WDC_LOG_FUNC_END__;
 	return ret;
 }
-
+//LCOV_EXCL_STOP
 
 int wifi_direct_disconnect_all(void)
 {
@@ -1497,7 +1508,7 @@ int wifi_direct_disconnect_all(void)
 	return ret;
 }
 
-
+//LCOV_EXCL_START
 int wifi_direct_disconnect(char *mac_address)
 {
 	__WDC_LOG_FUNC_START__;
@@ -1573,7 +1584,7 @@ int wifi_direct_accept_connection(char *mac_address)
 	__WDC_LOG_FUNC_END__;
 	return ret;
 }
-
+//LCOV_EXCL_STOP
 
 int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 					void *user_data)
@@ -1603,6 +1614,7 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 		return WIFI_DIRECT_ERROR_INVALID_PARAMETER;
 	}
 
+//LCOV_EXCL_START
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "GetConnectedPeers", params, &error);
 
@@ -1689,6 +1701,7 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 
 	g_variant_iter_free(iter_peers);
 	g_variant_unref(reply);
+//LCOV_EXCL_STOP
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
 }
@@ -2506,6 +2519,7 @@ int wifi_direct_set_device_name(const char *device_name)
 	return ret;
 }
 
+//LCOV_EXCL_START
 int wifi_direct_get_network_interface_name(char **name)
 {
 	__WDC_LOG_FUNC_START__;
@@ -2708,6 +2722,7 @@ int wifi_direct_get_gateway_address(char **gateway_address)
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
 }
+//LCOV_EXCL_STOP
 
 int wifi_direct_get_mac_address(char **mac_address)
 {
@@ -3138,7 +3153,7 @@ int wifi_direct_foreach_persistent_groups(wifi_direct_persistent_group_cb cb,
 	}
 
 	WDC_LOGD("wifi_direct_foreach_persistent_groups() SUCCESS");
-
+//LCOV_EXCL_START
 	while(g_variant_iter_loop(iter_groups, "a{sv}", &iter_group)) {
 		const char *ssid = NULL;
 		char *go_mac_address = NULL;
@@ -3168,12 +3183,13 @@ int wifi_direct_foreach_persistent_groups(wifi_direct_persistent_group_cb cb,
 			break;
 		}
 	}
-
+//LCOV_EXCL_STOP
 	g_variant_iter_free(iter_groups);
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
 }
 
+//LCOV_EXCL_START
 int wifi_direct_remove_persistent_group(char *mac_address, const char *ssid)
 {
 	__WDC_LOG_FUNC_START__;
@@ -3214,40 +3230,7 @@ int wifi_direct_remove_persistent_group(char *mac_address, const char *ssid)
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
 }
-
-int wifi_direct_set_p2poem_loglevel(int increase_log_level)
-{
-	__WDC_LOG_FUNC_START__;
-/* TODO:
-	wifi_direct_client_request_s req;
-	wifi_direct_client_response_s rsp;
-	int res = WIFI_DIRECT_ERROR_NONE;
-
-	if (g_client_info.is_registered == false) {
-		WDC_LOGE("Client is NOT registered");
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_NOT_INITIALIZED;
-	}
-
-	memset(&req, 0, sizeof(wifi_direct_client_request_s));
-	memset(&rsp, 0, sizeof(wifi_direct_client_response_s));
-
-	req.cmd = WIFI_DIRECT_CMD_SET_OEM_LOGLEVEL;
-	req.client_id = g_client_info.client_id;
-	if (increase_log_level == 0)
-		req.data.int1 = false;
-	else
-		req.data.int1 = true;
-
-	res = __wfd_client_send_request(g_client_info.sync_sockfd, &req, &rsp);
-	if (res != WIFI_DIRECT_ERROR_NONE) {
-		__WDC_LOG_FUNC_END__;
-		return res;
-	}
-*/
-	__WDC_LOG_FUNC_END__;
-	return WIFI_DIRECT_ERROR_NONE;
-}
+//LCOV_EXCL_STOP
 
 int wifi_direct_start_service_discovery(char *mac_address,
 		wifi_direct_service_type_e type)
@@ -3256,6 +3239,8 @@ int wifi_direct_start_service_discovery(char *mac_address,
 	__WDC_LOG_FUNC_START__;
 
 	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_SERVICE_DISCOVERY_FEATURE);
+
+//LCOV_EXCL_START
 
 	GError* error = NULL;
 	GVariant *reply = NULL;
@@ -3296,6 +3281,7 @@ int wifi_direct_start_service_discovery(char *mac_address,
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
 	return ret;
+//LCOV_EXCL_STOP
 #else /* TIZEN_FEATURE_SERVICE_DISCOVERY */
 	return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
 #endif /* TIZEN_FEATURE_SERVICE_DISCOVERY */
@@ -3309,7 +3295,7 @@ int wifi_direct_cancel_service_discovery(char *mac_address,
 	__WDC_LOG_FUNC_START__;
 
 	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_SERVICE_DISCOVERY_FEATURE);
-
+//LCOV_EXCL_START
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
@@ -3349,6 +3335,7 @@ int wifi_direct_cancel_service_discovery(char *mac_address,
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
 	return ret;
+//LCOV_EXCL_STOP
 #else /* TIZEN_FEATURE_SERVICE_DISCOVERY */
 	return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
 #endif /* TIZEN_FEATURE_SERVICE_DISCOVERY */
@@ -3360,7 +3347,7 @@ int wifi_direct_register_service(wifi_direct_service_type_e type, char *info1, c
 	__WDC_LOG_FUNC_START__;
 
 	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_SERVICE_DISCOVERY_FEATURE);
-
+//LCOV_EXCL_START
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
@@ -3414,20 +3401,18 @@ int wifi_direct_register_service(wifi_direct_service_type_e type, char *info1, c
 
 	ret = __net_wifidirect_gerror_to_enum(error);
 	if(ret != WIFI_DIRECT_ERROR_NONE) {
-		if (buf)
-			g_free(buf);
-
+		g_free(buf);
 		return ret;
 	}
 
 	g_variant_get(reply, "(ii)", &ret, service_id);
 	g_variant_unref(reply);
-	if (buf)
-		g_free(buf);
+	g_free(buf);
 
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
 	return ret;
+//LCOV_EXCL_STOP
 #else /* TIZEN_FEATURE_SERVICE_DISCOVERY */
 	return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
 #endif /* TIZEN_FEATURE_SERVICE_DISCOVERY */
@@ -3439,7 +3424,7 @@ int wifi_direct_deregister_service(unsigned int service_id)
 	__WDC_LOG_FUNC_START__;
 
 	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_SERVICE_DISCOVERY_FEATURE);
-
+//LCOV_EXCL_START
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	GVariant *params = NULL;
@@ -3466,6 +3451,7 @@ int wifi_direct_deregister_service(unsigned int service_id)
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
 	return ret;
+//LCOV_EXCL_STOP
 #else /* TIZEN_FEATURE_SERVICE_DISCOVERY */
 	return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
 #endif /* TIZEN_FEATURE_SERVICE_DISCOVERY */
@@ -3516,7 +3502,7 @@ int wifi_direct_get_peer_info(char* mac_address, wifi_direct_discovered_peer_inf
 		__WDC_LOG_FUNC_END__;
 		return WIFI_DIRECT_ERROR_INVALID_PARAMETER;
 	}
-
+//LCOV_EXCL_START
 	params = g_variant_new("(s)", mac_address);
 	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
 						  "GetPeerInfo", params, &error);
@@ -3596,6 +3582,7 @@ int wifi_direct_get_peer_info(char* mac_address, wifi_direct_discovered_peer_inf
 	*peer_info = peer;
 
 	g_variant_unref(reply);
+//LCOV_EXCL_STOP
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
 }
@@ -3882,6 +3869,7 @@ int wifi_direct_set_display_availability(bool availability)
 #endif /* TIZEN_FEATURE_WIFI_DISPLAY */
 }
 
+//LCOV_EXCL_START
 int wifi_direct_get_peer_display_type(char *mac_address, wifi_direct_display_type_e *type)
 {
 	__WDC_LOG_FUNC_START__;
@@ -4121,3 +4109,4 @@ int wifi_direct_get_peer_display_throughput(char *mac_address, int *throughput)
 	return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
 #endif /* TIZEN_FEATURE_WIFI_DISPLAY */
 }
+//LCOV_EXCL_STOP
