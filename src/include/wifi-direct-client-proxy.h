@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2012 Samsung Electronics Co., Ltd. All rights reserved.
  *
- * Contact: Sungsik Jang <sungsik.jang@samsung.com>, Dongwook Lee <dwmax.lee@samsung.com> 
+ * Contact: Sungsik Jang <sungsik.jang@samsung.com>, Dongwook Lee <dwmax.lee@samsung.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,26 +33,25 @@
 #define IPSTR_LEN 16
 #define WFD_SOCK_FILE_PATH "/tmp/wfd_client_socket"
 
-#define WIFIDIRECT_FEATURE 						"http://tizen.org/feature/network.wifi.direct"
-#define WIFIDIRECT_DISPLAY_FEATURE 				"http://tizen.org/feature/network.wifi.direct.display"
-#define WIFIDIRECT_SERVICE_DISCOVERY_FEATURE 	"http://tizen.org/feature/network.wifi.direct.service_discovery"
+#define WIFIDIRECT_FEATURE						"http://tizen.org/feature/network.wifi.direct"
+#define WIFIDIRECT_DISPLAY_FEATURE				"http://tizen.org/feature/network.wifi.direct.display"
+#define WIFIDIRECT_SERVICE_DISCOVERY_FEATURE	"http://tizen.org/feature/network.wifi.direct.service_discovery"
 
 #define CHECK_FEATURE_SUPPORTED(feature_name)\
 	do {\
 		bool feature_supported = FALSE;\
-		if(!system_info_get_platform_bool(feature_name, &feature_supported)){\
-			if(feature_supported == FALSE){\
+		if (!system_info_get_platform_bool(feature_name, &feature_supported)) {\
+			if (feature_supported == FALSE) {\
 				LOGE("%s feature is disabled", feature_name);\
 				return WIFI_DIRECT_ERROR_NOT_SUPPORTED;\
-			}\
+			} \
 		} else {\
 			LOGE("Error - Feature getting from System Info");\
 			return WIFI_DIRECT_ERROR_OPERATION_FAILED;\
-		}\
-	}while(0)
+		} \
+	} while (0)
 
-typedef struct
-{
+typedef struct {
 	bool is_registered;
 	int client_id;
 	int sync_sockfd;
@@ -82,7 +81,7 @@ typedef struct
 
 extern char *wfd_debug_print(char *file, int line, char *format, ...);
 
-//Manage
+/* Manage */
 void wifi_direct_process_manage_activation(GDBusConnection *connection,
 		const gchar *object_path, GVariant *parameters);
 void wifi_direct_process_manage_deactivation(GDBusConnection *connection,
@@ -104,13 +103,13 @@ void wifi_direct_process_manage_peer_found(GDBusConnection *connection,
 void wifi_direct_process_manage_peer_lost(GDBusConnection *connection,
 		const gchar *object_path, GVariant *parameters);
 
-//Group
+/* Group */
 void wifi_direct_process_group_created(GDBusConnection *connection,
 		const gchar *object_path, GVariant *parameters);
 void wifi_direct_process_group_destroyed(GDBusConnection *connection,
 		const gchar *object_path, GVariant *parameters);
 
-//Service
+/* Service */
 void wifi_direct_process_service_discovery_started(GDBusConnection *connection,
 		const gchar *object_path, GVariant *parameters);
 void wifi_direct_process_service_discovery_found(GDBusConnection *connection,

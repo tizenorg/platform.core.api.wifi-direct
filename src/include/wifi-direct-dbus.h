@@ -45,7 +45,7 @@ extern "C" {
 #define WIFI_DIRECT_DBUS_REPLY_TIMEOUT_SYNC     10 * 1000
 #define DBUS_OBJECT_PATH_MAX                    150
 
-#define WFD_MANAGER_QUARK (g_quark_from_string ("wifi-direct-manager"))
+#define WFD_MANAGER_QUARK (g_quark_from_string("wifi-direct-manager"))
 
 #define wifi_direct_dbus_method_call_sync(interface_name, method, params, error) \
 	wifi_direct_dbus_method_call_sync_debug(interface_name, method, params, error, __func__)

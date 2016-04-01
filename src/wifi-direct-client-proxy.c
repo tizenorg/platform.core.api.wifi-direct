@@ -103,7 +103,7 @@ static wifi_direct_client_info_s *__wfd_get_control()
 static int __net_wifidirect_gerror_to_enum(GError* error)
 {
 	int ret = WIFI_DIRECT_ERROR_NONE;
-	if(error == NULL) {
+	if (error == NULL) {
 		WDC_LOGI("GError is NULL!!");
 		return ret;
 	}
@@ -294,7 +294,7 @@ void wifi_direct_process_manage_peer_ip_assigned(GDBusConnection *connection,
 		return;
 	}
 
-	g_variant_get(reply, "(i&s)", ret ,&get_str);
+	g_variant_get(reply, "(i&s)", ret, &get_str);
 	g_variant_unref(reply);
 
 	WDC_LOGD("Interface Name = [%s]", get_str);
@@ -561,8 +561,7 @@ void __wfd_client_print_entry_list(wfd_discovery_entry_s *list, int num)
 	int i = 0;
 
 	WDC_LOGD("------------------------------------------");
-	for (i = 0; i < num; i++)
-	{
+	for (i = 0; i < num; i++)	{
 		WDC_LOGD("== Peer index : %d ==", i);
 		WDC_LOGD("is Group Owner ? %s", list[i].is_group_owner ? "YES" : "NO");
 		WDC_LOGD("device_name : %s", list[i].device_name);
@@ -644,9 +643,8 @@ int wifi_direct_initialize(void)
 						  "GetState", NULL, &error);
 
 	res = __net_wifidirect_gerror_to_enum(error);
-	if(res != WIFI_DIRECT_ERROR_NONE) {
+	if (res != WIFI_DIRECT_ERROR_NONE)
 		return res;
-	}
 
 	g_variant_get(reply, "(ii)", &res, &state);
 	WDC_LOGD("State = [%d]", state);
@@ -669,7 +667,7 @@ int wifi_direct_initialize(void)
 
 #ifdef TIZEN_FEATURE_SERVICE_DISCOVERY
 	g_client_info.service_cb = NULL;
-	g_client_info.user_data_for_cb_service= NULL;
+	g_client_info.user_data_for_cb_service = NULL;
 #endif /* TIZEN_FEATURE_SERVICE_DISCOVERY */
 
 	__WDC_LOG_FUNC_END__;
@@ -1022,7 +1020,7 @@ int wifi_direct_activate(void)
 						    "Activate", NULL, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1051,7 +1049,7 @@ int wifi_direct_deactivate(void)
 						  "Deactivate", NULL, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1084,7 +1082,7 @@ int wifi_direct_start_discovery(bool listen_only, int timeout)
 		return WIFI_DIRECT_ERROR_INVALID_PARAMETER;
 	}
 
-	builder = g_variant_builder_new(G_VARIANT_TYPE ("a{sv}"));
+	builder = g_variant_builder_new(G_VARIANT_TYPE("a{sv}"));
 	g_variant_builder_add(builder, "{sv}", "Mode", g_variant_new("b", listen_only));
 	g_variant_builder_add(builder, "{sv}", "Timeout", g_variant_new("i", timeout));
 	params = g_variant_new("(a{sv})", builder);
@@ -1095,7 +1093,7 @@ int wifi_direct_start_discovery(bool listen_only, int timeout)
 						  "StartDiscovery", params, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1130,7 +1128,7 @@ int wifi_direct_start_discovery_specific_channel(bool listen_only,
 		return WIFI_DIRECT_ERROR_INVALID_PARAMETER;
 	}
 
-	builder = g_variant_builder_new(G_VARIANT_TYPE ("a{sv}"));
+	builder = g_variant_builder_new(G_VARIANT_TYPE("a{sv}"));
 	g_variant_builder_add(builder, "{sv}", "Mode", g_variant_new("b", listen_only));
 	g_variant_builder_add(builder, "{sv}", "Timeout", g_variant_new("i", timeout));
 	g_variant_builder_add(builder, "{sv}", "Channel", g_variant_new("i", channel));
@@ -1142,7 +1140,7 @@ int wifi_direct_start_discovery_specific_channel(bool listen_only,
 						  "StartDiscovery", params, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1171,7 +1169,7 @@ int wifi_direct_cancel_discovery(void)
 						  "StopDiscovery", NULL, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1202,10 +1200,10 @@ static char **get_service_list(char *services, unsigned int *count)
 	pos1 = services;
 	pos2 = g_strdup(services);
 
-	pos1 = strtok_r (pos1,",\n", &saveptr);
+	pos1 = strtok_r(pos1, ",\n", &saveptr);
 	while (pos1) {
 		cnt++;
-		pos1 = strtok_r (NULL, ",\n", &saveptr);
+		pos1 = strtok_r(NULL, ",\n", &saveptr);
 	}
 	WDC_LOGD("Total Service Count = %d", cnt);
 
@@ -1216,13 +1214,13 @@ static char **get_service_list(char *services, unsigned int *count)
 			g_free(pos2);
 			return NULL;
 		}
-		pos2 = strtok_r (pos2,",\n", &saveptr);
+		pos2 = strtok_r(pos2, ",\n", &saveptr);
 		while (pos2 != NULL) {
 			char *s = strchr(pos2, ' ');
 			if (s) {
 				*s = '\0';
 				result[i++] = strdup(pos2);
-				pos2 = strtok_r (NULL, ",\n", &saveptr);
+				pos2 = strtok_r(NULL, ",\n", &saveptr);
 			}
 		}
 	}
@@ -1236,7 +1234,7 @@ static char **get_service_list(char *services, unsigned int *count)
 	} else {
 		*count = 0;
 		if (result) {
-			for (j=0; j<i && result[j] != NULL; j++)
+			for (j = 0; j < i && result[j] != NULL; j++)
 				free(result[j]);
 			free(result);
 		}
@@ -1277,9 +1275,8 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb cb,
 						  "GetDiscoveredPeers", params, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret!= WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(iaa{sv})", &ret, &iter_peers);
 	if (ret != WIFI_DIRECT_ERROR_NONE) {
@@ -1289,7 +1286,7 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb cb,
 
 	WDC_LOGD("wifi_direct_foreach_discovered_peers() SUCCESS");
 //LCOV_EXCL_START
-	while(g_variant_iter_loop(iter_peers, "a{sv}", &iter_peer)) {
+	while (g_variant_iter_loop(iter_peers, "a{sv}", &iter_peer)) {
 		wifi_direct_discovered_peer_info_s *peer_list = NULL;
 
 		peer_list = (wifi_direct_discovered_peer_info_s *) g_try_malloc0(sizeof(wifi_direct_discovered_peer_info_s));
@@ -1348,7 +1345,7 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb cb,
 			}
 		}
 
-		//__wfd_client_print_entry_list(peer_list, 1);
+		/* __wfd_client_print_entry_list(peer_list, 1); */
 		if (!cb(peer_list, user_data)) {
 			g_variant_iter_free(iter_peer);
 			break;
@@ -1389,7 +1386,7 @@ int wifi_direct_connect(char *mac_address)
 						  "Connect", params, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1428,7 +1425,7 @@ int wifi_direct_cancel_connection(char *mac_address)
 						  "CancelConnection", params, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1467,7 +1464,7 @@ int wifi_direct_reject_connection(char *mac_address)
 						  "RejectConnection", params, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1498,7 +1495,7 @@ int wifi_direct_disconnect_all(void)
 						  "DisconnectAll", NULL, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1537,7 +1534,7 @@ int wifi_direct_disconnect(char *mac_address)
 						  "Disconnect", params, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1575,7 +1572,7 @@ int wifi_direct_accept_connection(char *mac_address)
 						  "AcceptConnection", params, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1619,9 +1616,8 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 						  "GetConnectedPeers", params, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(iaa{sv})", &ret, &iter_peers);
 	if (ret != WIFI_DIRECT_ERROR_NONE) {
@@ -1631,7 +1627,7 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 
 	WDC_LOGD("wifi_direct_foreach_connected_peers() SUCCESS");
 
-	while(g_variant_iter_loop(iter_peers, "a{sv}", &iter_peer)) {
+	while (g_variant_iter_loop(iter_peers, "a{sv}", &iter_peer)) {
 		wifi_direct_connected_peer_info_s *peer_list = NULL;
 
 		peer_list = (wifi_direct_connected_peer_info_s *) g_try_malloc0(sizeof(wifi_direct_connected_peer_info_s));
@@ -1692,7 +1688,7 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb cb,
 			}
 		}
 
-		//__wfd_client_print_connected_peer_info(peer_list, 1);
+		/* __wfd_client_print_connected_peer_info(peer_list, 1); */
 		if (!cb(peer_list, user_data)) {
 			g_variant_iter_free(iter_peer);
 			break;
@@ -1727,7 +1723,7 @@ int wifi_direct_create_group(void)
 						  "CreateGroup", NULL, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1758,7 +1754,7 @@ int wifi_direct_destroy_group(void)
 						  "DestroyGroup", NULL, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1798,9 +1794,8 @@ int wifi_direct_is_group_owner(bool *owner)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	WDC_LOGD("%s() SUCCESS", __func__);
 	g_variant_get(reply, "(b)", &val);
@@ -1840,9 +1835,8 @@ int wifi_direct_is_autonomous_group(bool *autonomous_group)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	WDC_LOGD("%s() SUCCESS", __func__);
 	g_variant_get(reply, "(b)", &val);
@@ -1884,7 +1878,7 @@ int wifi_direct_set_group_owner_intent(int intent)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -1923,9 +1917,8 @@ int wifi_direct_get_group_owner_intent(int *intent)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
 	*intent = val;
@@ -1962,7 +1955,7 @@ int wifi_direct_set_max_clients(int max)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -2001,9 +1994,8 @@ int wifi_direct_get_max_clients(int *max)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
 	*max = val;
@@ -2044,9 +2036,8 @@ int wifi_direct_get_operating_channel(int *channel)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
 	*channel = val;
@@ -2080,7 +2071,7 @@ int wifi_direct_activate_pushbutton(void)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -2121,7 +2112,7 @@ int wifi_direct_set_wps_pin(char *pin)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -2161,12 +2152,11 @@ int wifi_direct_get_wps_pin(char **pin)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(i&s)", &ret, &str);
-	if(pin != NULL && str != NULL)
+	if (pin != NULL && str != NULL)
 		*pin = g_strdup(str);
 	g_variant_unref(reply);
 
@@ -2204,9 +2194,8 @@ int wifi_direct_get_supported_wps_mode(int *wps_mode)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &mode);
 	*wps_mode = mode;
@@ -2247,9 +2236,8 @@ int wifi_direct_foreach_supported_wps_types(wifi_direct_supported_wps_type_cb cb
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &wps_mode);
 	g_variant_unref(reply);
@@ -2295,9 +2283,8 @@ int wifi_direct_get_local_wps_type(wifi_direct_wps_type_e *type)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &mode);
 	*type = mode;
@@ -2342,7 +2329,7 @@ int wifi_direct_set_req_wps_type(wifi_direct_wps_type_e type)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -2381,9 +2368,8 @@ int wifi_direct_get_req_wps_type(wifi_direct_wps_type_e *type)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &mode);
 	*type = mode;
@@ -2423,9 +2409,8 @@ int wifi_direct_get_ssid(char **ssid)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(i&s)", &ret, &str);
 	*ssid = g_strdup(str);
@@ -2465,9 +2450,8 @@ int wifi_direct_get_device_name(char **device_name)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(i&s)", &ret, &str);
 	*device_name = g_strdup(str);
@@ -2509,7 +2493,7 @@ int wifi_direct_set_device_name(const char *device_name)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -2559,11 +2543,10 @@ int wifi_direct_get_network_interface_name(char **name)
 						  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
-	g_variant_get(reply, "(i&s)", ret ,&get_str);
+	g_variant_get(reply, "(i&s)", ret, &get_str);
 	*name = g_strdup(get_str);
 	g_variant_unref(reply);
 
@@ -2603,11 +2586,10 @@ int wifi_direct_get_ip_address(char **ip_address)
 						  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
-	g_variant_get(reply, "(i&s)", ret ,&str);
+	g_variant_get(reply, "(i&s)", ret, &str);
 	*ip_address = g_strdup(str);
 	g_variant_unref(reply);
 
@@ -2643,7 +2625,7 @@ int wifi_direct_get_subnet_mask(char **subnet_mask)
 
 	ret = wifi_direct_get_state(&status);
 	WDC_LOGD("wifi_direct_get_state() state=[%d], ret=[%d]", status, ret);
-	if( status < WIFI_DIRECT_STATE_CONNECTED) {
+	if (status < WIFI_DIRECT_STATE_CONNECTED) {
 		WDC_LOGE("Device is not connected!");
 		__WDC_LOG_FUNC_END__;
 		return WIFI_DIRECT_ERROR_NOT_PERMITTED;
@@ -2655,11 +2637,10 @@ int wifi_direct_get_subnet_mask(char **subnet_mask)
 						  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
-	g_variant_get(reply, "(i&s)", ret ,&get_str);
+	g_variant_get(reply, "(i&s)", ret, &get_str);
 	*subnet_mask = g_strdup(get_str);
 	g_variant_unref(reply);
 
@@ -2696,7 +2677,7 @@ int wifi_direct_get_gateway_address(char **gateway_address)
 
 	ret = wifi_direct_get_state(&status);
 	WDC_LOGD("wifi_direct_get_state() state=[%d], ret=[%d]", status, ret);
-	if(status < WIFI_DIRECT_STATE_CONNECTED) {
+	if (status < WIFI_DIRECT_STATE_CONNECTED) {
 		WDC_LOGE("Device is not connected!");
 		__WDC_LOG_FUNC_END__;
 		return WIFI_DIRECT_ERROR_NOT_PERMITTED;
@@ -2708,11 +2689,10 @@ int wifi_direct_get_gateway_address(char **gateway_address)
 						  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
-	g_variant_get(reply, "(i&s)", ret ,&get_str);
+	g_variant_get(reply, "(i&s)", ret, &get_str);
 	*gateway_address = g_strdup(get_str);
 	g_variant_unref(reply);
 
@@ -2753,9 +2733,8 @@ int wifi_direct_get_mac_address(char **mac_address)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(i&s)", &ret, &str);
 	*mac_address = g_strdup(str);
@@ -2795,14 +2774,13 @@ int wifi_direct_get_state(wifi_direct_state_e *state)
 						  "GetState", NULL, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
 	*state = (wifi_direct_state_e) val;
 	/* for CAPI : there is no WIFI_DIRECT_STATE_GROUP_OWNER type in CAPI */
-	if(*state == WIFI_DIRECT_STATE_GROUP_OWNER)
+	if (*state == WIFI_DIRECT_STATE_GROUP_OWNER)
 		*state = WIFI_DIRECT_STATE_CONNECTED;
 
 	g_variant_unref(reply);
@@ -2840,12 +2818,11 @@ int wifi_direct_is_discoverable(bool* discoverable)
 						  "IsDiscoverable", NULL, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(b)", discoverable);
-	WDC_LOGD("Discoverable = [%s]", *discoverable ? "Yes":"No");
+	WDC_LOGD("Discoverable = [%s]", *discoverable ? "Yes" : "No");
 
 	WDC_LOGD("%s() SUCCESS", __func__);
 	g_variant_unref(reply);
@@ -2880,13 +2857,12 @@ int wifi_direct_is_listening_only(bool* listen_only)
 						  "IsListeningOnly", NULL, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(b)", listen_only);
 
-	WDC_LOGD("Is listen only = [%s]", *listen_only ? "Yes":"No");
+	WDC_LOGD("Is listen only = [%s]", *listen_only ? "Yes" : "No");
 	WDC_LOGD("%s() SUCCESS", __func__);
 	g_variant_unref(reply);
 
@@ -2979,7 +2955,7 @@ int wifi_direct_set_autoconnection_mode(bool mode)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -3018,9 +2994,8 @@ int wifi_direct_is_autoconnection_mode(bool *mode)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ib)", &ret, &val);
 	*mode = val;
@@ -3056,7 +3031,7 @@ int wifi_direct_set_persistent_group_enabled(bool enabled)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -3097,9 +3072,8 @@ int wifi_direct_is_persistent_group_enabled(bool *enabled)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	WDC_LOGD("%s() SUCCESS", __func__);
 	g_variant_get(reply, "(b)", &val);
@@ -3142,9 +3116,8 @@ int wifi_direct_foreach_persistent_groups(wifi_direct_persistent_group_cb cb,
 						  "GetPersistentGroups", params, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(iaa{sv})", &ret, &iter_groups);
 	if (ret != WIFI_DIRECT_ERROR_NONE) {
@@ -3154,7 +3127,7 @@ int wifi_direct_foreach_persistent_groups(wifi_direct_persistent_group_cb cb,
 
 	WDC_LOGD("wifi_direct_foreach_persistent_groups() SUCCESS");
 //LCOV_EXCL_START
-	while(g_variant_iter_loop(iter_groups, "a{sv}", &iter_group)) {
+	while (g_variant_iter_loop(iter_groups, "a{sv}", &iter_group)) {
 		const char *ssid = NULL;
 		char *go_mac_address = NULL;
 
@@ -3220,7 +3193,7 @@ int wifi_direct_remove_persistent_group(char *mac_address, const char *ssid)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -3273,7 +3246,7 @@ int wifi_direct_start_service_discovery(char *mac_address,
 						    &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -3327,7 +3300,7 @@ int wifi_direct_cancel_service_discovery(char *mac_address,
 						    &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -3443,7 +3416,7 @@ int wifi_direct_deregister_service(unsigned int service_id)
 						    &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -3462,7 +3435,7 @@ int wifi_direct_init_miracast(bool enable)
 	__WDC_LOG_FUNC_START__;
 	int ret = WIFI_DIRECT_ERROR_NONE;
 
-	if(enable)
+	if (enable)
 		ret = wifi_direct_init_display();
 	else
 		ret = wifi_direct_deinit_display();
@@ -3508,9 +3481,8 @@ int wifi_direct_get_peer_info(char* mac_address, wifi_direct_discovered_peer_inf
 						  "GetPeerInfo", params, &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ia{sv})", &ret, &iter_peer);
 	if (ret != WIFI_DIRECT_ERROR_NONE) {
@@ -3646,7 +3618,7 @@ int wifi_direct_get_passphrase(char** passphrase)
 		return WIFI_DIRECT_ERROR_NOT_INITIALIZED;
 	}
 
-	if(!passphrase){
+	if (!passphrase) {
 		WDC_LOGE("NULL Param [passphrase]!");
 		__WDC_LOG_FUNC_END__;
 		return WIFI_DIRECT_ERROR_INVALID_PARAMETER;
@@ -3658,9 +3630,8 @@ int wifi_direct_get_passphrase(char** passphrase)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	WDC_LOGD("%s() SUCCESS", __func__);
 	g_variant_get(reply, "(i&s)", &ret, &val);
@@ -3702,7 +3673,7 @@ int wifi_direct_set_autoconnection_peer(char *mac_address)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -3735,7 +3706,7 @@ int wifi_direct_init_display(void)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -3771,7 +3742,7 @@ int wifi_direct_deinit_display(void)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -3817,7 +3788,7 @@ int wifi_direct_set_display(wifi_direct_display_type_e type, int port, int hdcp)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -3856,7 +3827,7 @@ int wifi_direct_set_display_availability(bool availability)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
@@ -3902,9 +3873,8 @@ int wifi_direct_get_peer_display_type(char *mac_address, wifi_direct_display_typ
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
 	*type = val;
@@ -3950,9 +3920,8 @@ int wifi_direct_get_peer_display_availability(char *mac_address, bool *availabil
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
 	*availability = val;
@@ -3998,9 +3967,8 @@ int wifi_direct_get_peer_display_hdcp(char *mac_address, int *hdcp)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
 	*hdcp = val;
@@ -4046,9 +4014,8 @@ int wifi_direct_get_peer_display_port(char *mac_address, int *port)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
 	*port = val;
@@ -4094,9 +4061,8 @@ int wifi_direct_get_peer_display_throughput(char *mac_address, int *throughput)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE)
 		return ret;
-	}
 
 	g_variant_get(reply, "(ii)", &ret, &val);
 	*throughput = val;

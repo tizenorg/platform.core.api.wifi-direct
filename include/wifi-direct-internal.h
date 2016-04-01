@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 #ifndef __WIFI_DIRECT_INTERNAL_H__
 #define __WIFI_DIRECT_INTERNAL_H__
 
@@ -28,7 +27,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 /**
  * @brief Rejects the connection request from other device now in progress.
@@ -73,6 +71,4 @@ int wifi_direct_accept_connection(char *mac_address);
 #ifdef __cplusplus
 }
 #endif
-
-
-#endif /* __WIFI_DIRECT_INTERNAL_H_*/
+#endif							/* __WIFI_DIRECT_INTERNAL_H_ */

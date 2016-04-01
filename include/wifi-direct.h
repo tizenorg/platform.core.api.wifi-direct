@@ -27,7 +27,6 @@
 extern "C" {
 #endif
 
-
 /**
  * @addtogroup CAPI_NETWORK_WIFI_DIRECT_MODULE
  * @{
@@ -37,8 +36,7 @@ extern "C" {
  * @brief Enumeration for Wi-Fi Direct error code.
  * @since_tizen 2.3
  */
-typedef enum
-{
+typedef enum {
 	WIFI_DIRECT_ERROR_NONE = TIZEN_ERROR_NONE,  /**< Successful */
 	WIFI_DIRECT_ERROR_NOT_PERMITTED = TIZEN_ERROR_NOT_PERMITTED,  /**< Operation not permitted(1) */
 	WIFI_DIRECT_ERROR_OUT_OF_MEMORY = TIZEN_ERROR_OUT_OF_MEMORY,  /**< Out of memory(12) */
@@ -272,8 +270,7 @@ typedef enum {
  * @since_tizen 2.3
  * @remarks You can use APIs for wifi-direct display function instead of is_miracast_device value which is deprecated since 2.4.
  */
-typedef struct
-{
+typedef struct {
 	char *device_name;  /**< Device's friendly name */
 	char *mac_address;  /**< Device's P2P Device Address */
 	char *interface_address;  /**< Device's P2P Interface Address, Valid only if device is a P2P GO */
@@ -298,8 +295,7 @@ typedef struct
  * @since_tizen 2.3
  * @remarks You can use APIs for wifi-direct display function instead of is_miracast_device value which is deprecated since 2.4.
  */
-typedef struct
-{
+typedef struct {
 	char* device_name;  /**< Device's friendly name */
 	char* ip_address;  /**< The IP address */
 	char* mac_address;  /**< Device's P2P Device Address */
@@ -1840,7 +1836,7 @@ int wifi_direct_cancel_service_discovery(char *mac_address,
  * @param[in] info2  Describes the information of service. It is specific \n
  *	service.
  * @param[out] service_id  A Service ID will be assigned to service getting \n
- * 	registered.
+ * registered.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
@@ -1862,7 +1858,7 @@ int wifi_direct_register_service(wifi_direct_service_type_e service_type,
  * @privlevel public
  * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] service_id  A Service ID for which service has to be \n
- * 	deregistered.
+ * deregistered.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
@@ -2131,6 +2127,4 @@ int wifi_direct_get_peer_display_throughput(char *mac_address, int *throughput);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __TIZEN_NET_WIFI_DIRECT_H__ */
-
+#endif							/* __TIZEN_NET_WIFI_DIRECT_H__ */

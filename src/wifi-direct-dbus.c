@@ -184,7 +184,7 @@ gboolean wifi_direct_dbus_init(void)
 	GDBusConnection *connection = NULL;
 
 	connection = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, &Error);
-	if(connection == NULL) {
+	if (connection == NULL) {
 		WDC_LOGE("Failed to get connection, Error[%s]", Error->message);
 		g_error_free(Error); //LCOV_EXCL_LINE
 		return FALSE; //LCOV_EXCL_LINE
@@ -238,9 +238,9 @@ int wifi_direct_dbus_unpack_ay(unsigned char *dst, GVariant *src, int size)
 		return -1;
 	}
 
-	while (g_variant_iter_loop (iter, "y", &dst[length])) {
+	while (g_variant_iter_loop(iter, "y", &dst[length])) {
 		length++;
-		if(length >= size)
+		if (length >= size)
 			break;
 	}
 	g_variant_iter_free(iter);
