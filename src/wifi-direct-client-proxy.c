@@ -111,7 +111,7 @@ static int __net_wifidirect_gerror_to_enum(GError* error)
 	WDC_LOGE("wifi_direct_dbus_method_call_sync() failed. error [%d: %s]",
 			error->code, error->message);
 
-	if(NULL == strstr(error->message, "net.wifidirect.Error")) {
+	if (NULL == strstr(error->message, "net.wifidirect.Error")) {
 //LCOV_EXCL_START
 		if (NULL != strstr(error->message, ".AccessDenied")) {
 			WDC_LOGE("Client doesn't have wifidirect privilege");
@@ -3373,7 +3373,7 @@ int wifi_direct_register_service(wifi_direct_service_type_e type, char *info1, c
 						    &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret != WIFI_DIRECT_ERROR_NONE) {
+	if (ret != WIFI_DIRECT_ERROR_NONE) {
 		g_free(buf);
 		return ret;
 	}
@@ -3590,7 +3590,7 @@ int wifi_direct_set_passphrase(const char *passphrase)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}

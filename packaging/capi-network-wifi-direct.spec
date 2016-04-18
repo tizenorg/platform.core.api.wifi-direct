@@ -1,6 +1,6 @@
 Name:       capi-network-wifi-direct
 Summary:    Network WiFi-Direct Library
-Version:    1.2.58
+Version:    1.2.59
 Release:    1
 Group:      Network & Connectivity/API
 License:    Apache-2.0
