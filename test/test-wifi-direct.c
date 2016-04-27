@@ -1913,15 +1913,6 @@ void process_input(const char *input, gpointer user_data)
 		}
 	}
 	break;
-
-	case CMD_INCREASE_OEM_LOGLEVEL:
-		wifi_direct_set_p2poem_loglevel(1);
-		break;
-
-	case CMD_DECREASE_OEM_LOGLEVEL:
-		wifi_direct_set_p2poem_loglevel(0);
-		break;
-
 	case CMD_REGISTER_SERVICE:
 		if (ad != NULL) {
 			wifi_direct_service_type_e service_type = WIFI_DIRECT_SERVICE_TYPE_ALL;
