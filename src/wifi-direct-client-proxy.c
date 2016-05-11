@@ -4075,4 +4075,5 @@ int wifi_direct_get_peer_display_throughput(char *mac_address, int *throughput)
 	return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
 #endif /* TIZEN_FEATURE_WIFI_DISPLAY */
 }
+
 //LCOV_EXCL_STOP
