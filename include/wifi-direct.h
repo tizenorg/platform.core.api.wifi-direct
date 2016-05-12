@@ -2119,6 +2119,65 @@ int wifi_direct_get_peer_display_port(char *mac_address, int *port);
  * @see wifi_direct_foreach_discovered_peers()
  */
 int wifi_direct_get_peer_display_throughput(char *mac_address, int *throughput);
+/**
+ * @brief Enables / Disables automatic group removal feature when all peers are disconnected.
+ * @since_tizen 3.0
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
+ * @param[in] enable Enables/Disables Group Removal feature based on the value TRUE/FALSE
+ * @return 0 on success, otherwise a negative error value
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+ * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
+ * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+ * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+ * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
+ * @post wifi_direct_connection_state_changed_cb() will be invoked with WIFI_DIRECT_GROUP_DESTROYED.
+ * @see wifi_direct_activate()
+ * @see wifi_direct_create_group()
+ * @see wifi_direct_connection_state_changed_cb()
+ */
+int wifi_direct_set_group_destroy(bool enable);
+
+/**
+* @brief Sets the timer which is used to expire the connection session.
+* @since_tizen 3.0
+* @privlevel public
+* @privilege http://tizen.org/privilege/wifidirect
+* @param[in] seconds Set the connection session timer value in second
+* @return 0 on success, otherwise a negative error value
+* @retval #WIFI_DIRECT_ERROR_NONE  Successful
+* @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+* @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+* @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+* @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+* @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+* @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+* @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
+* @see wifi_direct_activate()
+*/
+int wifi_direct_set_session_timer(int seconds);
+
+/**
+* @brief Gets the timer which is used to expire the connection session.
+* @since_tizen 3.0
+* @privlevel public
+* @privilege http://tizen.org/privilege/wifidirect
+* @param[out] seconds  Connection session timer value
+* @return 0 on success, otherwise a negative error value
+* @retval #WIFI_DIRECT_ERROR_NONE  Successful
+* @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+* @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
+* @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+* @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
+* @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
+* @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
+* @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
+* @see wifi_direct_activate()
+*/
+int wifi_direct_get_session_timer(int *seconds);
+
 
 /**
  * @}
