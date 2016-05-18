@@ -1,6 +1,6 @@
 Name:       capi-network-wifi-direct
 Summary:    Network WiFi-Direct Library
-Version:    1.2.62
+Version:    1.2.63
 Release:    1
 Group:      Network & Connectivity/API
 License:    Apache-2.0
@@ -83,6 +83,7 @@ make %{?jobs:-j%jobs}
 rm -rf %{buildroot}
 %make_install
 
+ln -sf libwifi-direct.so.%{version} %{buildroot}/%{_libdir}/libwifi-direct.so.0
 
 %post -p /sbin/ldconfig
 
