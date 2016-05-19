@@ -4157,8 +4157,42 @@ int wifi_direct_get_session_timer(int *seconds)
 
 	WDC_LOGD("Session Timer = [%d] Seconds", *seconds);
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
+
 	__WDC_LOG_FUNC_END__;
 	return ret;
 }
 
+int wifi_direct_set_auto_group_removal(bool enable)
+{
+	__WDC_LOG_FUNC_START__;
+
+	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_FEATURE);
+
+	GError* error = NULL;
+	GVariant *reply = NULL;
+	GVariant *params = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
+
+	if (g_client_info.is_registered == false) {
+		WDC_LOGE("Client is NOT registered");
+		__WDC_LOG_FUNC_END__;
+		return WIFI_DIRECT_ERROR_NOT_INITIALIZED;
+	}
+
+	params = g_variant_new("(b)", enable);
+	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_CONFIG_INTERFACE,
+					  "SetAutoGroupRemoval",
+					  params,
+					  &error);
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
+
+	WDC_LOGD("%s() return : [%d]", __func__, ret);
+	__WDC_LOG_FUNC_END__;
+	return ret;
+}
 //LCOV_EXCL_STOP
