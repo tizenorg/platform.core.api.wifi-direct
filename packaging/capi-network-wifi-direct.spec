@@ -103,7 +103,6 @@ cp %{_builddir}/%{buildsubdir}/LICENSE.APLv2 %{buildroot}/usr/share/license/%{na
 %{_includedir}/wifi-direct/wifi-direct.h
 %{_includedir}/wifi-direct/wifi-direct-internal.h
 %{_libdir}/libwifi-direct.so
-
 #%files -n test-wifi-direct
 #%manifest test-wifi-direct.manifest
 #%defattr(-,app,app,-)
