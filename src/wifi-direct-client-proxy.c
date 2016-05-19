@@ -4075,4 +4075,90 @@ int wifi_direct_get_peer_display_throughput(char *mac_address, int *throughput)
 	return WIFI_DIRECT_ERROR_NOT_SUPPORTED;
 #endif /* TIZEN_FEATURE_WIFI_DISPLAY */
 }
+
+int wifi_direct_set_session_timer(int seconds)
+{
+	__WDC_LOG_FUNC_START__;
+
+	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_FEATURE);
+
+	GError* error = NULL;
+	GVariant *reply = NULL;
+	GVariant *params = NULL;
+	int ret = WIFI_DIRECT_ERROR_NONE;
+
+	if (g_client_info.is_registered == false) {
+		WDC_LOGE("Client is NOT registered.");
+		__WDC_LOG_FUNC_END__;
+		return WIFI_DIRECT_ERROR_NOT_INITIALIZED;
+	}
+	if (seconds < 0) {
+		WDC_LOGE("Negative Timer Value");
+		__WDC_LOG_FUNC_END__;
+		return WIFI_DIRECT_ERROR_INVALID_PARAMETER;
+	}
+
+	WDC_LOGD("seconds = [%d]", seconds);
+
+	params = g_variant_new("(i)", seconds);
+	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_CONFIG_INTERFACE,
+					  "SetSessionTimer",
+					  params,
+					  &error);
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if(ret == WIFI_DIRECT_ERROR_NONE) {
+		g_variant_get(reply, "(i)", &ret);
+		g_variant_unref(reply);
+	}
+
+	WDC_LOGD("%s() SUCCESS", __func__);
+
+	__WDC_LOG_FUNC_END__;
+	return WIFI_DIRECT_ERROR_NONE;
+
+}
+
+int wifi_direct_get_session_timer(int *seconds)
+{
+	__WDC_LOG_FUNC_START__;
+
+	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_FEATURE);
+
+	GError* error = NULL;
+	GVariant *reply = NULL;
+	int val = 0;
+	int ret = WIFI_DIRECT_ERROR_NONE;
+
+	if (g_client_info.is_registered == false) {
+		WDC_LOGE("Client is NOT registered");
+		__WDC_LOG_FUNC_END__;
+		return WIFI_DIRECT_ERROR_NOT_INITIALIZED;
+	}
+
+	if (!seconds) {
+		WDC_LOGE("Invalid Parameter");
+		__WDC_LOG_FUNC_END__;
+		return WIFI_DIRECT_ERROR_INVALID_PARAMETER;
+	}
+
+	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_CONFIG_INTERFACE,
+					  "GetSessionTimer",
+					  NULL,
+					  &error);
+
+	ret = __net_wifidirect_gerror_to_enum(error);
+	if (ret != WIFI_DIRECT_ERROR_NONE)
+		return ret;
+
+	g_variant_get(reply, "(ii)", &ret, &val);
+	*seconds = val;
+	g_variant_unref(reply);
+
+	WDC_LOGD("Session Timer = [%d] Seconds", *seconds);
+	WDC_LOGD("%s() return : [%d]", __func__, ret);
+	__WDC_LOG_FUNC_END__;
+	return ret;
+}
+
 //LCOV_EXCL_STOP
