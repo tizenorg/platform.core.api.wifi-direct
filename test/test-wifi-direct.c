@@ -167,6 +167,7 @@ enum {
 	CMD_GET_PEER_DISPLAY_THROUGHPUT,
 	CMD_GET_SESSION_TIMER,
 	CMD_SET_SESSION_TIMER,
+	CMD_SET_AUTO_GROUP_REMOVAL,
 
 	CMD_INVALID = 255,
 };
@@ -276,6 +277,7 @@ menu_str_t g_menu_str[] = {
 		{ CMD_GET_PEER_DISPLAY_THROUGHPUT, "CMD_GET_PEER_DISPLAY_THROUGHPUT" },
 		{ CMD_GET_SESSION_TIMER, "CMD_GET_SESSION_TIMER" },
 		{ CMD_SET_SESSION_TIMER, "CMD_SET_SESSION_TIMER" },
+		{ CMD_SET_AUTO_GROUP_REMOVAL, "CMD_SET_AUTO_GROUP_REMOVAL" },
 
 		{ -1, NULL }, };
 
@@ -2380,6 +2382,20 @@ void process_input(const char *input, gpointer user_data)
 			result = wifi_direct_set_session_timer(session_timer);
 			printf("wifi_direct_set_session_timer() result=[%d] session_timer[%d]\n",
 							result, session_timer);
+		}
+		break;
+	case CMD_SET_AUTO_GROUP_REMOVAL:
+		if (ad != NULL) {
+			int enable;
+			if (scanf(" %d", &enable) < 1)
+				break;
+
+			result = wifi_direct_set_auto_group_removal(enable);
+			printf("wifi_direct_set_auto_group_removal() result=[%d]\n", result);
+			if (enable == true)
+				printf("Enable auto Group Removal!! \n");
+			else
+				printf("Disable auto Group Removal mode!! \n");
 		}
 		break;
 	case CMD_FULL_MENU:
