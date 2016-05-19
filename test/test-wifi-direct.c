@@ -165,6 +165,8 @@ enum {
 	CMD_GET_PEER_DISPLAY_HDCP,
 	CMD_GET_PEER_DISPLAY_PORT,
 	CMD_GET_PEER_DISPLAY_THROUGHPUT,
+	CMD_GET_SESSION_TIMER,
+	CMD_SET_SESSION_TIMER,
 
 	CMD_INVALID = 255,
 };
@@ -272,6 +274,8 @@ menu_str_t g_menu_str[] = {
 		{ CMD_GET_PEER_DISPLAY_HDCP, "CMD_GET_PEER_DISPLAY_HDCP" },
 		{ CMD_GET_PEER_DISPLAY_PORT, "CMD_GET_PEER_DISPLAY_PORT" },
 		{ CMD_GET_PEER_DISPLAY_THROUGHPUT, "CMD_GET_PEER_DISPLAY_THROUGHPUT" },
+		{ CMD_GET_SESSION_TIMER, "CMD_GET_SESSION_TIMER" },
+		{ CMD_SET_SESSION_TIMER, "CMD_SET_SESSION_TIMER" },
 
 		{ -1, NULL }, };
 
@@ -2358,7 +2362,26 @@ void process_input(const char *input, gpointer user_data)
 			}
 		}
 		break;
+	case CMD_GET_SESSION_TIMER:
+		if (ad != NULL) {
+			int session_timer;
+			result = wifi_direct_get_session_timer(&session_timer);
+			printf("wifi_direct_get_session_timer() result=[%d] session_timer[%d]\n",
+							result, session_timer);
+		}
+		break;
+	case CMD_SET_SESSION_TIMER:
+		if (ad != NULL) {
+			int session_timer;
+			printf("Input Session Timer \n");
+			if (scanf(" %2d", &session_timer) < 1)
+				break;
 
+			result = wifi_direct_set_session_timer(session_timer);
+			printf("wifi_direct_set_session_timer() result=[%d] session_timer[%d]\n",
+							result, session_timer);
+		}
+		break;
 	case CMD_FULL_MENU:
 		usage_full();
 		break;
