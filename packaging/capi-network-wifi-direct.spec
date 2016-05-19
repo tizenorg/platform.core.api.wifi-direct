@@ -102,7 +102,6 @@ ln -sf libwifi-direct.so.%{version} %{buildroot}/%{_libdir}/libwifi-direct.so.0
 %{_includedir}/wifi-direct/wifi-direct.h
 %{_includedir}/wifi-direct/wifi-direct-internal.h
 %{_libdir}/libwifi-direct.so
-
 #%files -n test-wifi-direct
 #%manifest test-wifi-direct.manifest
 #%license LICENSE
