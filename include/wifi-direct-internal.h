@@ -32,7 +32,6 @@ extern "C" {
  * @brief Rejects the connection request from other device now in progress.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  The MAC address of rejected device
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
@@ -48,7 +47,6 @@ int wifi_direct_reject_connection(char *mac_address);
  * @brief Accepts a connection requested from PEER.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  MAC Address of the PEER.
  * @return 0 on success, otherwise a negative error value.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful

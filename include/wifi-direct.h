@@ -426,6 +426,7 @@ typedef void (*wifi_direct_service_state_changed_cb) (int error_code,
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @see wifi_direct_deinitialize()
@@ -436,7 +437,6 @@ int wifi_direct_initialize(void);
  * @brief Deinitializes Wi-Fi Direct service.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
@@ -451,7 +451,6 @@ int wifi_direct_deinitialize(void);
  * @brief Registers the callback called when the state of device is changed.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] cb  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -469,7 +468,6 @@ int wifi_direct_set_device_state_changed_cb(wifi_direct_device_state_changed_cb 
  * @brief Unregisters the callback called when the state of device is changed.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -483,7 +481,6 @@ int wifi_direct_unset_device_state_changed_cb(void);
  * @brief Registers the callback called when the state of discovery is changed.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] cb  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -501,7 +498,6 @@ int wifi_direct_set_discovery_state_changed_cb(wifi_direct_discovery_state_chagn
  * @brief Unregisters the callback called when the state of discovery is changed.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -515,7 +511,6 @@ int wifi_direct_unset_discovery_state_changed_cb(void);
  * @brief Registers the callback called when the peer is found.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] cb  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -533,7 +528,6 @@ int wifi_direct_set_peer_found_cb(wifi_direct_peer_found_cb cb, void* user_data)
  * @brief Unregisters the callback called when the peer is found.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -547,7 +541,6 @@ int wifi_direct_unset_peer_found_cb(void);
  * @brief Registers the callback called when the state of connection is changed.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] cb  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -565,7 +558,6 @@ int wifi_direct_set_connection_state_changed_cb(wifi_direct_connection_state_cha
  * @brief Unregisters the callback called when the state of connection is changed.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -579,7 +571,6 @@ int wifi_direct_unset_connection_state_changed_cb(void);
  * @brief Registers the callback called when the IP address of the client is assigned if your device is the group owner.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] cb  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -597,7 +588,6 @@ int wifi_direct_set_client_ip_address_assigned_cb(wifi_direct_client_ip_address_
  * @brief Unregisters the callback called when the IP address of the client is assigned if your device is the group owner.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -611,7 +601,6 @@ int wifi_direct_unset_client_ip_address_assigned_cb(void);
  * @brief Registers the callback called when the state of the service discovery is changed.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] cb  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -629,7 +618,6 @@ int wifi_direct_set_service_state_changed_cb(wifi_direct_service_state_changed_c
  * @brief Unregisters the callback called when the state of the service discovery is changed.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -643,7 +631,6 @@ int wifi_direct_unset_service_state_changed_cb(void);
  * @brief Activates the Wi-Fi Direct service, asynchronous.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
@@ -666,7 +653,6 @@ int wifi_direct_activate(void);
  * @brief Deactivates the Wi-Fi Direct service, asynchronous.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
@@ -686,7 +672,6 @@ int wifi_direct_deactivate(void);
  * @brief Starts discovery to find all P2P capable devices, asynchronous.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @details If application developers call wifi_direct_start_discovery() with @a listen_only as @c true,
  * then skip the initial 802.11 Scan and then enter Listen state instead of cycling between Scan and Listen.
  * @param[in] listen_only  The status of listen only: (@c true = listen only, @c false = cycling between Scan and Listen)
@@ -712,7 +697,6 @@ int wifi_direct_start_discovery(bool listen_only, int timeout);
  * @brief Starts discovery to find all P2P capable devices with specified channel, asynchronous.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @details If you call this function with @a channel as @c WIFI_DIRECT_DISCOVERY_FULL_SCAN
  * it works same as wifi_direct_start_discovery() API.
  * If application developers call this function with @a channel as @c WIFI_DIRECT_DISCOVERY_SOCIAL_CHANNEL,
@@ -747,7 +731,6 @@ int wifi_direct_start_discovery_specific_channel(bool listen_only, int timeout, 
  * @brief Cancels discovery process, asynchronous.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
@@ -767,7 +750,6 @@ int wifi_direct_cancel_discovery(void);
   * @brief Called repeatedly when you get the information of discovered peers.
   * @since_tizen 2.3
   * @privlevel public
-  * @privilege http://tizen.org/privilege/wifidirect
   * @remarks @a peer is valid only in this function.
  * @param[in] peer The information of the discovered peer
  * @param[in] user_data The user data passed from foreach function
@@ -780,7 +762,6 @@ typedef bool(*wifi_direct_discovered_peer_cb)	(wifi_direct_discovered_peer_info_
  * @brief Gets the information of discovered peers.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] callback  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -802,7 +783,6 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb callback
  * @brief Connects to a specified peer, asynchronous.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @details This API connects to specified peer by automatically determining whether to perform group formation,
  * join an existing group, invite, re-invoke a group.
  * The decision is based on the current state of the peers (i.e. GO, STA, not connected) and the availability of persistent data.
@@ -832,7 +812,6 @@ int wifi_direct_connect(char *mac_address);
  * @brief Cancels the connection now in progress.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  The MAC address of rejected device
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
@@ -848,7 +827,6 @@ int wifi_direct_cancel_connection(char *mac_address);
  * @brief Disconnects all connected links to peers, asynchronous.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
@@ -869,7 +847,6 @@ int wifi_direct_disconnect_all(void);
  * @brief Disconnects the specified peer, asynchronous.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  The MAC address of remote device
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -892,7 +869,6 @@ int wifi_direct_disconnect(char *mac_address);
  * @brief Called repeatedly when you get the information of connected peers.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @remarks @a peer is valid only in this function.
  * @param[in] peer The information of discovered peer
  * @param[in] user_data The user data passed from foreach function
@@ -905,7 +881,6 @@ typedef bool(*wifi_direct_connected_peer_cb) (wifi_direct_connected_peer_info_s 
  * @brief Gets the information of connected peers.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] callback  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -927,7 +902,6 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb callback, 
  * @brief Creates a Wi-Fi Direct Group, asynchronous.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @details This API sets up device as the Group Owner and waits for clients to connect.
  * In addition, a soft AP will be created, the WPS registrar and the DHCP server will be started.
  * @return 0 on success, otherwise a negative error value
@@ -951,7 +925,6 @@ int wifi_direct_create_group(void);
  * @brief Destorys the Wi-Fi Direct Group, asynchronous.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @details This API destroys the Wi-Fi Direct Group owned by a local device.
  * If creating a Group is in progress, this API cancels that creating.
  * @return 0 on success, otherwise a negative error value
@@ -975,7 +948,6 @@ int wifi_direct_destroy_group(void);
  * @brief Checks whether this device is the group owner or not.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] is_group_owner  Indicates whether this device is the group owner or not
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -995,7 +967,6 @@ int wifi_direct_is_group_owner(bool *is_group_owner);
  * @brief Checks whether the current group is the autonomous group or not.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @details If you create a group by wifi_direct_create_group(), then the current group is the autonomous group.
  * @param[out] is_autonomous_group  Indicates whether the current group is the autonomous group or not
  * @return 0 on success, otherwise a negative error value
@@ -1018,7 +989,6 @@ int wifi_direct_is_autonomous_group(bool *is_autonomous_group);
  * @brief Sets the friendly name of a local device.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @details This device name is shown to other devices during device discovery.
  * @remarks The name set is only valid during activated state.
  * After Wi-Fi Direct is deactivated, this name will be same as the phone name.
@@ -1042,7 +1012,6 @@ int wifi_direct_set_device_name(const char *device_name);
  * @brief Gets the name of a local device.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @remarks @a device_name must be released with free().
  * @param[out] device_name  The name of a local device
  * @return 0 on success, otherwise a negative error value
@@ -1063,7 +1032,6 @@ int wifi_direct_get_device_name(char** device_name);
  * @brief Gets SSID(Service Set Identifier) of a local device.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @remarks @a ssid must be released using free().
  * @param[out] ssid  The SSID
  * @return 0 on success, otherwise a negative error value
@@ -1085,7 +1053,6 @@ int wifi_direct_get_ssid(char **ssid);
  * @brief Gets the name of network interface (for example: eth0, pdp0).
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @remarks @a name must be released using free().
  * @param[out] name  The name of the network interface
  * @return 0 on success, otherwise negative error value
@@ -1107,7 +1074,6 @@ int wifi_direct_get_network_interface_name(char **name);
  * @brief Gets IP address of a local device.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @remarks @a ip_address must be released using free().
  * @param[out] ip_address  The IP address
  * @return 0 on success, otherwise a negative error value
@@ -1129,7 +1095,6 @@ int wifi_direct_get_ip_address(char **ip_address);
  * @brief Gets the Subnet Mask.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @remarks @a subnet_mask must be released using free().
  * @param[out] subnet_mask  The subnet mask
  * @return 0 on success, otherwise a negative error value
@@ -1151,7 +1116,6 @@ int wifi_direct_get_subnet_mask(char **subnet_mask);
  * @brief Gets the Gateway address.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @remarks @a gateway_address must be released using free().
  * @param[out] gateway_address  The gateway address
  * @return 0 on success, otherwise a negative error value
@@ -1173,7 +1137,6 @@ int wifi_direct_get_gateway_address(char **gateway_address);
  * @brief Gets MAC address of a local device.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @remarks @a mac_address must be released using free().
  * @param[out] mac_address  The MAC address
  * @return 0 on success, otherwise a negative error value
@@ -1195,7 +1158,6 @@ int wifi_direct_get_mac_address(char **mac_address);
  * @brief Gets the state of Wi-Fi Direct service.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] state  The state of Wi-Fi Direct service
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1215,7 +1177,6 @@ int wifi_direct_get_state(wifi_direct_state_e *state);
  * @brief Checks whether this device is discoverable or not by P2P discovery.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @details If you call wifi_direct_start_discovery(), then your device can be discoverable.
  * @param[out] discoverable  The status of discoverable: (@c true = discoverable, @c false = non-discoverable)
  * @return 0 on success, otherwise a negative error value
@@ -1238,7 +1199,6 @@ int wifi_direct_is_discoverable(bool *discoverable);
  * @brief Checks whether the local device is listening only.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @details If you call wifi_direct_start_discovery() with @a listen_only as @c true, it does not support specific channel but the initial 802.11.
  * @param[out] listen_only  The status of listen only: (@c true = listen only, @c false = cycling between Scan and Listen or not in discovery state)
  * @return 0 on success, otherwise a negative error value
@@ -1251,6 +1211,7 @@ int wifi_direct_is_discoverable(bool *discoverable);
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
+ * @see wifi_direct_activate()
  * @see wifi_direct_start_discovery()
  * @see wifi_direct_cancel_discovery()
  * @see wifi_direct_is_discoverable()
@@ -1261,7 +1222,6 @@ int wifi_direct_is_listening_only(bool *listen_only);
  * @brief Gets the primary device type of a local device.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] type  The primary device type
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1281,7 +1241,6 @@ int wifi_direct_get_primary_device_type(wifi_direct_primary_device_type_e *type)
  * @brief Gets the secondary device type of a local device.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] type  The secondary device type
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1301,7 +1260,6 @@ int wifi_direct_get_secondary_device_type(wifi_direct_secondary_device_type_e* t
  * @brief Set the WPS config PBC as preferred method for connection.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
@@ -1311,9 +1269,7 @@ int wifi_direct_get_secondary_device_type(wifi_direct_secondary_device_type_e* t
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  */
 int wifi_direct_activate_pushbutton(void);
@@ -1322,7 +1278,6 @@ int wifi_direct_activate_pushbutton(void);
  * @brief Sets or updates the WPS PIN number user expects.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] pin  new pin to set. Application must set the new pin number before.
  * @return 0 on success, otherwise a negative error value.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1333,9 +1288,7 @@ int wifi_direct_activate_pushbutton(void);
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_get_wps_pin()
  */
@@ -1345,7 +1298,6 @@ int wifi_direct_set_wps_pin(char *pin);
  * @brief Gets the WPS PIN number.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] pin  Pointer to store pin number. Application must free this memory.
  * @return 0 on success, otherwise a negative error value.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1356,9 +1308,7 @@ int wifi_direct_set_wps_pin(char *pin);
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_set_wps_pin()
  */
@@ -1368,7 +1318,6 @@ int wifi_direct_get_wps_pin(char **pin);
  * @brief Gets the all supported WPS (Wi-Fi Protected Setup) types at local device.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] wps_mode  supported wps mode for local device
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
@@ -1387,7 +1336,6 @@ int wifi_direct_get_supported_wps_mode(int *wps_mode);
  * @brief Called when you get the supported WPS(Wi-Fi Protected Setup) type repeatedly.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] type  The type of WPS
  * @param[in] user_data  The user data passed from the request function
  * @return  @c true to continue with the next iteration of the loop, \n @c false to break out of the loop
@@ -1400,7 +1348,6 @@ typedef bool(*wifi_direct_supported_wps_type_cb)(wifi_direct_wps_type_e type, vo
  * @brief Gets the supported WPS (Wi-Fi Protected Setup) types.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] callback  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1421,7 +1368,6 @@ int wifi_direct_foreach_supported_wps_types(wifi_direct_supported_wps_type_cb ca
  * @brief Gets the WPS (Wi-Fi Protected Setup) type.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] type  The type of WPS
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
@@ -1441,7 +1387,6 @@ int wifi_direct_get_local_wps_type(wifi_direct_wps_type_e *type);
  * @brief Sets the requested WPS (Wi-Fi Protected Setup) type.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] type  The type of WPS
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
@@ -1461,7 +1406,6 @@ int wifi_direct_set_req_wps_type(wifi_direct_wps_type_e type);
  * @brief Gets the requested WPS (Wi-Fi Protected Setup) type.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] type  The type of WPS
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
@@ -1481,7 +1425,6 @@ int wifi_direct_get_req_wps_type(wifi_direct_wps_type_e *type);
  * @brief Sets the intent of the group owner.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @remarks The range of intent is 0 - 15. The higher the @a intent is, the higher the probability to be the group owner is.
  * @param[in] intent  The intent of the group owner
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1502,7 +1445,6 @@ int wifi_direct_set_group_owner_intent(int intent);
  * @brief Gets the intent of the group owner.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] intent  The intent of the group owner
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
@@ -1522,7 +1464,6 @@ int wifi_direct_get_group_owner_intent(int *intent);
  * @brief Sets the max number of clients.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] max  The max number of clients
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
@@ -1542,7 +1483,6 @@ int wifi_direct_set_max_clients(int max);
  * @brief Gets the max number of clients.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] max  The max number of clients
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
@@ -1562,7 +1502,6 @@ int wifi_direct_get_max_clients(int *max);
  * @brief Sets or updates Wi-Fi Protected Access (WPA) password. When creating Wi-Fi Direct Group, this password will be used.
  * @since_tizen 2.4
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param passphrase  new wpa password to set. Application must set the new password before.
  * @remarks a peer can connect to this group as Wi-Fi Infrastructured mode with a passphrase.
  * @return 0 on success, otherwise a negative error value.
@@ -1574,9 +1513,7 @@ int wifi_direct_get_max_clients(int *max);
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_get_passphrase()
  */
@@ -1586,7 +1523,6 @@ int wifi_direct_set_passphrase(const char *passphrase);
  * @brief Gets the Wi-Fi Protected Access (WPA) password when creating Wi-Fi Direct Group.
  * @since_tizen 2.4
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] passphrase  Pointer to store wpa password. Application must free this memory.
  * @return 0 on success, otherwise a negative error value.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1597,9 +1533,7 @@ int wifi_direct_set_passphrase(const char *passphrase);
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_set_passphrase()
  */
@@ -1609,7 +1543,6 @@ int wifi_direct_get_passphrase(char **passphrase);
  * @brief Gets the operating channel.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] channel  The operating channel
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1629,7 +1562,6 @@ int wifi_direct_get_operating_channel(int *channel);
  * @brief Sets the Autoconnection mode.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mode Describes the mode of connection. In case of TRUE \n
  *	auto-connection will be taken care by framework.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1645,7 +1577,6 @@ int wifi_direct_set_autoconnection_mode(bool mode);
  * @brief Get the Autoconnection mode status.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] mode Describes the auto connection mode of framework has set.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1661,7 +1592,6 @@ int wifi_direct_is_autoconnection_mode(bool *mode);
  * @brief Allows a device to connect automatically.
  * @since_tizen 2.4
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  Device MAC address to allow autoconnection
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1672,9 +1602,7 @@ int wifi_direct_is_autoconnection_mode(bool *mode);
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  */
 
@@ -1684,7 +1612,6 @@ int wifi_direct_set_autoconnection_peer(char *mac_address);
  * @brief Enables the persistent group.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @details If @a enabled is true, then P2P persisten group will be used while creating a group and establishing a connection.
  * @param[in] enabled  The status of persistent group: (@c true = enabled, @c false = disabled)
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1724,7 +1651,6 @@ int wifi_direct_is_persistent_group_enabled(bool *enabled);
  * @brief Called when you get the persistent groups repeatedly.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  The MAC address of the persistent group owner
  * @param[in] ssid  The SSID (Service Set Identifier) of the persistent group owner
  * @param[in] user_data  The user data passed from the request function
@@ -1738,7 +1664,6 @@ typedef bool(*wifi_direct_persistent_group_cb)(const char *mac_address, const ch
  * @brief Gets the persistent groups.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] callback  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1760,7 +1685,6 @@ int wifi_direct_foreach_persistent_groups(wifi_direct_persistent_group_cb callba
  * @brief Removes a persistent group.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  The MAC address of the persistent group owner
  * @param[in] ssid  The SSID (Service Set Identifier) of the persistent group owner
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1781,7 +1705,6 @@ int wifi_direct_remove_persistent_group(char *mac_address, const char *ssid);
  * @brief WiFi Direct Service Discovery will be started.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  The MAC address of servicing device. A broadcast \n
  *	will be sent when MAC is SET to ZERO.
  * @param[in] service_type  Describes the type of service.
@@ -1795,7 +1718,6 @@ int wifi_direct_remove_persistent_group(char *mac_address, const char *ssid);
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
  * @post wifi_direct_set_service_state_changed_cb() will be invoked.
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_set_service_state_changed_cb()
 */
@@ -1806,7 +1728,6 @@ int wifi_direct_start_service_discovery(char *mac_address,
  * @brief A service started for WiFi Direct Service Discovery will be stopped.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  The MAC address of servicing device. A broadcast \n
  *	will be sent when MAC is SET to ZERO.
  * @param[in] service_type  Describes the type of service.
@@ -1819,7 +1740,6 @@ int wifi_direct_start_service_discovery(char *mac_address,
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
 */
 int wifi_direct_cancel_service_discovery(char *mac_address,
@@ -1829,7 +1749,6 @@ int wifi_direct_cancel_service_discovery(char *mac_address,
  * @brief Registers for a service using WiFi Direct Service Discovery.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] service_type  Describes the type of service.
  * @param[in] info1  Describes the information of service. It is specific \n
  *	service.
@@ -1846,7 +1765,6 @@ int wifi_direct_cancel_service_discovery(char *mac_address,
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
 */
 int wifi_direct_register_service(wifi_direct_service_type_e service_type,
@@ -1856,7 +1774,6 @@ int wifi_direct_register_service(wifi_direct_service_type_e service_type,
  * @brief Deregisters for a service used for WiFi Direct Service Discovery.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] service_id  A Service ID for which service has to be \n
  * deregistered.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1868,7 +1785,6 @@ int wifi_direct_register_service(wifi_direct_service_type_e service_type,
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
 */
 int wifi_direct_deregister_service(unsigned int service_id);
@@ -1877,7 +1793,6 @@ int wifi_direct_deregister_service(unsigned int service_id);
  * @brief Initializes OR Deintializes the WiFi-Direct Display (MIRACAST) service.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] enable  Enables/Disables Service based on the value TRUE/FALSE
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
@@ -1888,7 +1803,6 @@ int wifi_direct_deregister_service(unsigned int service_id);
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
 */
 int wifi_direct_init_miracast(bool enable);
@@ -1897,7 +1811,6 @@ int wifi_direct_init_miracast(bool enable);
  * @brief Gets the information of a discovered peer.
  * @since_tizen 2.3
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  The MAC address of peer to get
  * @param[out] peer_info  The peer information to be passed
  * @return 0 on success, otherwise a negative error value
@@ -1920,7 +1833,6 @@ int wifi_direct_get_peer_info(char *mac_address, wifi_direct_discovered_peer_inf
  * @details Starts listen in only assigned channel.Device will be discoverable only in assigned listen channel.
  * @since_tizen 2.4
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
@@ -1931,7 +1843,6 @@ int wifi_direct_get_peer_info(char *mac_address, wifi_direct_discovered_peer_inf
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate()
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_deinit_display()
  * @see wifi_direct_set_display()
@@ -1942,7 +1853,6 @@ int wifi_direct_init_display(void);
  * @brief This API shall disable Wi-Fi Display functionality & disable the support of WFD Information Element (IE).
  * @since_tizen 2.4
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
@@ -1954,7 +1864,6 @@ int wifi_direct_init_display(void);
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate()
  * And enable Wi-Fi Display by wifi_direct_init_display().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_init_display()
  * @see wifi_direct_set_display()
@@ -1965,7 +1874,6 @@ int wifi_direct_deinit_display(void);
  * @brief Sets the Wi-Fi Display parameters for the WFD IE of local device.
  * @since_tizen 2.4
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] type  WFD Device Type: define the Role of WFD device like source or sink
  * @param[in] port  Specifies Session Management Control Port number. It should be 2 bytes (0~65535)
  * @param[in] hdcp  CP support bit: (@c 1 = enable the hdcp support, @c 0 = disable the hdcp support)
@@ -1979,7 +1887,6 @@ int wifi_direct_deinit_display(void);
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate()
  * And enable Wi-Fi Display by wifi_direct_init_display().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_init_display()
  * @see wifi_direct_deinit_display()
@@ -1990,7 +1897,6 @@ int wifi_direct_set_display(wifi_direct_display_type_e type, int port, int hdcp)
  * @brief Sets the Wi-Fi Display Session Availability
  * @since_tizen 2.4
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] availability Wi-Fi Display Session Availability
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -2002,7 +1908,6 @@ int wifi_direct_set_display(wifi_direct_display_type_e type, int port, int hdcp)
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate()
  * And enable Wi-Fi Display by wifi_direct_display_init().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_init_display()
  * @see wifi_direct_deinit_display()
@@ -2013,7 +1918,6 @@ int wifi_direct_set_display_availability(bool availability);
  * @brief Gets the information of a peer's Wi-Fi Display device type.
  * @since_tizen 2.4
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  MAC Address of the PEER
  * @param[out] type  The information of a peer's Wi-Fi Display device type
  * @if there's Wi-Fi Direct information, this will be NULL
@@ -2026,7 +1930,6 @@ int wifi_direct_set_display_availability(bool availability);
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_foreach_discovered_peers()
  */
@@ -2036,7 +1939,6 @@ int wifi_direct_get_peer_display_type(char *mac_address, wifi_direct_display_typ
  * @brief Gets the information of a peer's Wi-Fi Display session availability.
  * @since_tizen 2.4
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  MAC Address of the PEER
  * @param[out] availability  The information of a peer's Wi-Fi Display session availability
  * @if there's Wi-Fi Direct information, this will be NULL
@@ -2058,7 +1960,6 @@ int wifi_direct_get_peer_display_availability(char *mac_address, bool *availabil
  * @brief Gets the information of a peer's Wi-Fi Display HDCP support.
  * @since_tizen 2.4
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  MAC Address of the PEER
  * @param[out] hdcp  The information of a peer's Wi-Fi Display HDCP support
  * @if there's Wi-Fi Direct information, this will be NULL
@@ -2080,7 +1981,6 @@ int wifi_direct_get_peer_display_hdcp(char *mac_address, int *hdcp);
  * @brief Gets the information of a peer's Wi-Fi Display RTSP control port.
  * @since_tizen 2.4
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  MAC Address of the PEER
  * @param[out] port  The information of a peer's Wi-Fi Display RTSP control port
  * @if there's Wi-Fi Direct information, this will be NULL
@@ -2102,7 +2002,6 @@ int wifi_direct_get_peer_display_port(char *mac_address, int *port);
  * @brief Gets the information of a peer's Wi-Fi Display max throughput.
  * @since_tizen 2.4
  * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  MAC Address of the PEER
  * @param[out] throughput  The information of a peer's Wi-Fi Display max throughput (Mbps)
  * @if there's Wi-Fi Direct information, this will be NULL
@@ -2122,6 +2021,7 @@ int wifi_direct_get_peer_display_throughput(char *mac_address, int *throughput);
 /**
  * @brief Enables / Disables automatic group removal feature when all peers are disconnected.
  * @since_tizen 3.0
+ * @privlevel public
  * @param[in] enable Enables/Disables Group Removal feature based on the value TRUE/FALSE
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -2143,6 +2043,7 @@ int wifi_direct_set_auto_group_removal(bool enable);
 /**
 * @brief Sets the timer which is used to expire the connection session.
 * @since_tizen 3.0
+ * @privlevel public
 * @param[in] seconds Set the connection session timer value in second
 * @return 0 on success, otherwise a negative error value
 * @retval #WIFI_DIRECT_ERROR_NONE  Successful
