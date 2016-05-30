@@ -67,6 +67,10 @@
 /*****************************************************************************
  *  Global Variables
  *****************************************************************************/
+
+static wifi_direct_state_changed_cb g_state_cb = NULL;
+static void *g_user_data_for_cb_state = NULL;
+
 wifi_direct_client_info_s g_client_info = {
 	.is_registered = FALSE,
 	.client_id = -1,
@@ -137,6 +141,46 @@ static int __net_wifidirect_gerror_to_enum(GError* error)
 	}
 	g_error_free(error);
 	return ret;
+}
+
+void __wfd_vconf_state_changed_cb(keynode_t *key, void *data)
+{
+	__WDC_LOG_FUNC_START__;
+	int error_code = 0;
+	int state = 0;
+	int res = 0;
+
+	if (!g_state_cb) {
+		WDC_LOGI("g_state_cb is NULL!!");
+		return; //LCOV_EXCL_LINE
+	}
+
+	res = vconf_get_int(VCONFKEY_WIFI_DIRECT_STATE, &state);
+	if (res < 0) {
+		WDC_LOGE("Failed to get vconf value [%s]\n", VCONFKEY_WIFI_DIRECT_STATE);
+		__WDC_LOG_FUNC_END__;
+		return;
+	}
+
+	if (state == VCONFKEY_WIFI_DIRECT_ACTIVATED) {
+		state = WIFI_DIRECT_STATE_ACTIVATED;
+	} else if (state == VCONFKEY_WIFI_DIRECT_DEACTIVATED) {
+		state = WIFI_DIRECT_STATE_DEACTIVATED;
+	} else if (state == VCONFKEY_WIFI_DIRECT_CONNECTED) {
+		state = WIFI_DIRECT_STATE_CONNECTED;
+	} else if (state == VCONFKEY_WIFI_DIRECT_GROUP_OWNER) {
+		state = WIFI_DIRECT_STATE_GROUP_OWNER;
+	} else if (state == VCONFKEY_WIFI_DIRECT_DISCOVERING) {
+		state = WIFI_DIRECT_STATE_DISCOVERING;
+	} else {
+		WDC_LOGE("This state cannot be set as wifi_direct vconf state[%d]", state);
+		return;
+	}
+
+	g_state_cb(error_code, state, g_user_data_for_cb_state);
+
+	__WDC_LOG_FUNC_END__;
+	return;
 }
 
 /* Manage */
@@ -656,6 +700,7 @@ int wifi_direct_initialize(void)
 	g_client_info.discover_cb = NULL;
 	g_client_info.connection_cb = NULL;
 	g_client_info.ip_assigned_cb = NULL;
+	g_state_cb = NULL;
 
 	g_client_info.peer_found_cb = NULL;
 	g_client_info.user_data_for_cb_activation = NULL;
@@ -664,6 +709,7 @@ int wifi_direct_initialize(void)
 	g_client_info.user_data_for_cb_ip_assigned = NULL;
 	g_client_info.user_data_for_cb_peer_found = NULL;
 	g_client_info.user_data_for_cb_device_name = NULL;
+	g_user_data_for_cb_state = NULL;
 
 #ifdef TIZEN_FEATURE_SERVICE_DISCOVERY
 	g_client_info.service_cb = NULL;
@@ -693,11 +739,13 @@ int wifi_direct_deinitialize(void)
 	g_client_info.connection_cb = NULL;
 	g_client_info.ip_assigned_cb = NULL;
 	g_client_info.peer_found_cb = NULL;
+	g_state_cb = NULL;
 	g_client_info.user_data_for_cb_activation = NULL;
 	g_client_info.user_data_for_cb_discover = NULL;
 	g_client_info.user_data_for_cb_connection = NULL;
 	g_client_info.user_data_for_cb_ip_assigned = NULL;
 	g_client_info.user_data_for_cb_peer_found = NULL;
+	g_user_data_for_cb_state = NULL;
 
 #ifdef TIZEN_FEATURE_SERVICE_DISCOVERY
 	g_client_info.service_cb = NULL;
@@ -999,6 +1047,56 @@ int wifi_direct_unset_client_ip_address_assigned_cb(void)
 
 	__WDC_LOG_FUNC_END__;
 	return WIFI_DIRECT_ERROR_NONE;
+}
+
+int wifi_direct_set_state_changed_cb(wifi_direct_state_changed_cb cb, void *user_data)
+{
+	__WDC_LOG_FUNC_START__;
+	int ret = WIFI_DIRECT_ERROR_NONE;
+
+	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_FEATURE);
+
+	if (!cb) {
+		WDC_LOGE("Callback is NULL");
+		__WDC_LOG_FUNC_END__;
+		return WIFI_DIRECT_ERROR_INVALID_PARAMETER;
+	}
+
+	ret = vconf_notify_key_changed(VCONFKEY_WIFI_DIRECT_STATE,
+			__wfd_vconf_state_changed_cb, NULL);
+	if (ret) {
+		WDC_LOGE("Failed to set vconf notification callback");
+		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+	}
+
+	g_state_cb = cb;
+	g_user_data_for_cb_state = user_data;
+
+	__WDC_LOG_FUNC_END__;
+	return WIFI_DIRECT_ERROR_NONE;
+
+}
+
+int wifi_direct_unset_state_changed_cb(void)
+{
+	__WDC_LOG_FUNC_START__;
+	int ret = WIFI_DIRECT_ERROR_NONE;
+
+	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_FEATURE);
+
+	ret = vconf_ignore_key_changed(VCONFKEY_WIFI_DIRECT_STATE,
+			__wfd_vconf_state_changed_cb);
+	if (ret) {
+		WDC_LOGE("Failed to ignore vconf notification callback");
+		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+	}
+
+	g_state_cb = NULL;
+	g_user_data_for_cb_state = NULL;
+
+	__WDC_LOG_FUNC_END__;
+	return WIFI_DIRECT_ERROR_NONE;
+
 }
 
 int wifi_direct_activate(void)
@@ -2771,7 +2869,7 @@ int wifi_direct_get_state(wifi_direct_state_e *state)
 	if (val == VCONFKEY_WIFI_DIRECT_ACTIVATED) {
 		*state = WIFI_DIRECT_STATE_ACTIVATED;
 	} else if (val == VCONFKEY_WIFI_DIRECT_DEACTIVATED) {
-		*state= WIFI_DIRECT_STATE_DEACTIVATED;
+		*state = WIFI_DIRECT_STATE_DEACTIVATED;
 	} else if (val == VCONFKEY_WIFI_DIRECT_CONNECTED) {
 		*state = WIFI_DIRECT_STATE_CONNECTED;
 	} else if (val == VCONFKEY_WIFI_DIRECT_GROUP_OWNER) {
