@@ -443,6 +443,19 @@ typedef void (*wifi_direct_service_state_changed_cb) (int error_code,
 						const char *mac_address, void *user_data);
 
 /**
+ * @brief Called when the state of Wi-FI Direct is changed.
+ * @since_tizen 3.0
+ * @param[in] state  The Wi-Fi Direct state
+ * @param[in] user_data  The user data passed from the callback registration function
+ * @pre Changes in Wi-Fi Direct state will invoke this callback
+ * if you register this callback using wifi_direct_set_state_changed_cb().
+ * @see wifi_direct_set_state_changed_cb()
+ * @see wifi_direct_unset_state_changed_cb()
+ */
+typedef void (*wifi_direct_state_changed_cb)  (wifi_direct_state_e state,
+		void *user_data);
+
+/**
  * @brief Initializes Wi-Fi Direct service.
  * @since_tizen 2.3
  * @privlevel public
@@ -638,6 +651,30 @@ int wifi_direct_set_service_state_changed_cb(wifi_direct_service_state_changed_c
  * @see wifi_direct_set_service_state_changed_cb()
  */
 int wifi_direct_unset_service_state_changed_cb(void);
+
+/**
+ * @brief Registers the callback called when the state of Wi-Fi Direct is changed.
+ * @since_tizen 3.0
+ * @param[in] cb  The callback function to invoke
+ * @param[in] user_data  The user data to be passed to the callback function
+ * @return 0 on success, otherwise a negative error value
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED Operation Failed
+ * @see wifi_direct_unset_state_changed_cb()
+ */
+int wifi_direct_set_state_changed_cb(wifi_direct_state_changed_cb cb, void *user_data);
+
+/**
+ * @brief Unregisters the callback called when the state of Wi-Fi Direct is changed.
+ * @since_tizen 3.0
+ * @return 0 on success, otherwise a negative error value
+ * @retval #WIFI_DIRECT_ERROR_NONE  Successful
+ * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED Operation Failed
+ * @see wifi_direct_initialize()
+ * @see wifi_direct_set_state_changed_cb()
+ */
+int wifi_direct_unset_state_changed_cb(void);
 
 /**
  * @brief Activates the Wi-Fi Direct service, asynchronous.
