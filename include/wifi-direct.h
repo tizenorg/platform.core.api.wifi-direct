@@ -312,6 +312,10 @@ typedef struct {
 /**
  * @brief Called when the state of discovery is changed.
  * @since_tizen 2.3
+ * @details The following error codes can be delivered
+ *     #WIFI_DIRECT_ERROR_NONE
+ *     #WIFI_DIRECT_ERROR_OPERATION_FAILED
+ *     #WIFI_DIRECT_ERROR_NOT_PERMITTED
  * @param[in] error_code  The error code
  * @param[in] discovery_state  The discovery state
  * @param[in] user_data  The user data passed from the callback registration function
@@ -329,6 +333,10 @@ typedef void (*wifi_direct_discovery_state_chagned_cb) (int error_code,
 /**
  * @brief Called when the peer is found.
  * @since_tizen 2.3
+ * @details The following error codes can be delivered
+ *     #WIFI_DIRECT_ERROR_NONE
+ *     #WIFI_DIRECT_ERROR_OPERATION_FAILED
+ *     #WIFI_DIRECT_ERROR_NOT_PERMITTED
  * @param[in] error_code  The error code
  * @param[in] discovery_state  The discovery state
  * @param[in] mac_address  The MAC address of found peer
@@ -348,6 +356,10 @@ typedef void (*wifi_direct_peer_found_cb) (int error_code,
 /**
  * @brief Called when the state of device is changed.
  * @since_tizen 2.3
+ * @details The following error codes can be delivered
+ *     #WIFI_DIRECT_ERROR_NONE
+ *     #WIFI_DIRECT_ERROR_OPERATION_FAILED
+ *     #WIFI_DIRECT_ERROR_NOT_PERMITTED
  * @param[in] error_code  The error code
  * @param[in] device_state  The device state
  * @param[in] user_data  The user data passed from the callback registration function
@@ -365,6 +377,11 @@ typedef void (*wifi_direct_device_state_changed_cb) (int error_code,
 /**
  * @brief Called when the state of connection is changed.
  * @since_tizen 2.3
+ * @details The following error codes can be delivered
+ *     #WIFI_DIRECT_ERROR_NONE
+ *     #WIFI_DIRECT_ERROR_OPERATION_FAILED
+ *     #WIFI_DIRECT_ERROR_NOT_PERMITTED
+ *     #WIFI_DIRECT_ERROR_CONNECTOIN_FAILED
  * @param[in] error_code  The error code
  * @param[in] connection_state  The connection state
  * @param[in] mac_address  The MAC address of the connection peer
@@ -385,6 +402,10 @@ typedef void (*wifi_direct_connection_state_changed_cb) (int error_code,
 /**
  * @brief Called when IP address of client is assigned when your device is group owner.
  * @since_tizen 2.3
+ * @details The following error codes can be delivered
+ *     #WIFI_DIRECT_ERROR_NONE
+ *     #WIFI_DIRECT_ERROR_OPERATION_FAILED
+ *     #WIFI_DIRECT_ERROR_NOT_PERMITTED
  * @param[in] mac_address  The MAC address of connection peer
  * @param[in] ip_address  The IP address of connection peer
  * @param[in] interface_address  The interface address of connection peer
@@ -400,6 +421,10 @@ typedef void (*wifi_direct_client_ip_address_assigned_cb) (const char *mac_addre
  /**
  * @brief Called when the state of Service discovery is changed.
  * @since_tizen 2.3
+ * @details The following error codes can be delivered
+ *     #WIFI_DIRECT_ERROR_NONE
+ *     #WIFI_DIRECT_ERROR_OPERATION_FAILED
+ *     #WIFI_DIRECT_ERROR_NOT_PERMITTED
  * @param[in] error_code  The error code
  * @param[in] service_state  The service discovery state
  * @param[in] service_type  Specifies the types of service
@@ -426,6 +451,7 @@ typedef void (*wifi_direct_service_state_changed_cb) (int error_code,
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @see wifi_direct_deinitialize()
@@ -435,8 +461,6 @@ int wifi_direct_initialize(void);
 /**
  * @brief Deinitializes Wi-Fi Direct service.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value.
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
@@ -450,8 +474,6 @@ int wifi_direct_deinitialize(void);
 /**
  * @brief Registers the callback called when the state of device is changed.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] cb  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -468,8 +490,6 @@ int wifi_direct_set_device_state_changed_cb(wifi_direct_device_state_changed_cb 
 /**
  * @brief Unregisters the callback called when the state of device is changed.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -482,8 +502,6 @@ int wifi_direct_unset_device_state_changed_cb(void);
 /**
  * @brief Registers the callback called when the state of discovery is changed.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] cb  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -500,8 +518,6 @@ int wifi_direct_set_discovery_state_changed_cb(wifi_direct_discovery_state_chagn
 /**
  * @brief Unregisters the callback called when the state of discovery is changed.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -514,8 +530,6 @@ int wifi_direct_unset_discovery_state_changed_cb(void);
 /**
  * @brief Registers the callback called when the peer is found.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] cb  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -532,8 +546,6 @@ int wifi_direct_set_peer_found_cb(wifi_direct_peer_found_cb cb, void* user_data)
 /**
  * @brief Unregisters the callback called when the peer is found.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -546,8 +558,6 @@ int wifi_direct_unset_peer_found_cb(void);
 /**
  * @brief Registers the callback called when the state of connection is changed.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] cb  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -564,8 +574,6 @@ int wifi_direct_set_connection_state_changed_cb(wifi_direct_connection_state_cha
 /**
  * @brief Unregisters the callback called when the state of connection is changed.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -578,8 +586,6 @@ int wifi_direct_unset_connection_state_changed_cb(void);
 /**
  * @brief Registers the callback called when the IP address of the client is assigned if your device is the group owner.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] cb  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -596,8 +602,6 @@ int wifi_direct_set_client_ip_address_assigned_cb(wifi_direct_client_ip_address_
 /**
  * @brief Unregisters the callback called when the IP address of the client is assigned if your device is the group owner.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -610,8 +614,6 @@ int wifi_direct_unset_client_ip_address_assigned_cb(void);
 /**
  * @brief Registers the callback called when the state of the service discovery is changed.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] cb  The callback function to invoke
  * @param[in] user_data  The user data to be passed to the callback function
  * @return 0 on success, otherwise a negative error value
@@ -628,8 +630,6 @@ int wifi_direct_set_service_state_changed_cb(wifi_direct_service_state_changed_c
 /**
  * @brief Unregisters the callback called when the state of the service discovery is changed.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -648,6 +648,7 @@ int wifi_direct_unset_service_state_changed_cb(void);
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -671,6 +672,7 @@ int wifi_direct_activate(void);
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -696,6 +698,7 @@ int wifi_direct_deactivate(void);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -731,6 +734,7 @@ int wifi_direct_start_discovery(bool listen_only, int timeout);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -752,6 +756,7 @@ int wifi_direct_start_discovery_specific_channel(bool listen_only, int timeout, 
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -767,7 +772,6 @@ int wifi_direct_cancel_discovery(void);
   * @brief Called repeatedly when you get the information of discovered peers.
   * @since_tizen 2.3
   * @privlevel public
-  * @privilege http://tizen.org/privilege/wifidirect
   * @remarks @a peer is valid only in this function.
  * @param[in] peer The information of the discovered peer
  * @param[in] user_data The user data passed from foreach function
@@ -788,6 +792,7 @@ typedef bool(*wifi_direct_discovered_peer_cb)	(wifi_direct_discovered_peer_info_
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -812,6 +817,7 @@ int wifi_direct_foreach_discovered_peers(wifi_direct_discovered_peer_cb callback
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -837,6 +843,7 @@ int wifi_direct_connect(char *mac_address);
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -853,6 +860,7 @@ int wifi_direct_cancel_connection(char *mac_address);
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -876,6 +884,7 @@ int wifi_direct_disconnect_all(void);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -891,8 +900,6 @@ int wifi_direct_disconnect(char *mac_address);
 /**
  * @brief Called repeatedly when you get the information of connected peers.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @remarks @a peer is valid only in this function.
  * @param[in] peer The information of discovered peer
  * @param[in] user_data The user data passed from foreach function
@@ -913,6 +920,7 @@ typedef bool(*wifi_direct_connected_peer_cb) (wifi_direct_connected_peer_info_s 
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -934,6 +942,7 @@ int wifi_direct_foreach_connected_peers(wifi_direct_connected_peer_cb callback, 
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -958,6 +967,7 @@ int wifi_direct_create_group(void);
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -982,6 +992,7 @@ int wifi_direct_destroy_group(void);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1003,6 +1014,7 @@ int wifi_direct_is_group_owner(bool *is_group_owner);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1028,6 +1040,7 @@ int wifi_direct_is_autonomous_group(bool *is_autonomous_group);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1050,6 +1063,7 @@ int wifi_direct_set_device_name(const char *device_name);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
@@ -1072,6 +1086,7 @@ int wifi_direct_get_device_name(char** device_name);
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_OUT_OF_MEMORY  Out of memory
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1094,6 +1109,7 @@ int wifi_direct_get_ssid(char **ssid);
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_OUT_OF_MEMORY  Out of memory
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1116,6 +1132,7 @@ int wifi_direct_get_network_interface_name(char **name);
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_OUT_OF_MEMORY  Out of memory
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1138,6 +1155,7 @@ int wifi_direct_get_ip_address(char **ip_address);
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_OUT_OF_MEMORY  Out of memory
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1160,6 +1178,7 @@ int wifi_direct_get_subnet_mask(char **subnet_mask);
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_OUT_OF_MEMORY  Out of memory
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1182,6 +1201,7 @@ int wifi_direct_get_gateway_address(char **gateway_address);
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_OUT_OF_MEMORY  Out of memory
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1194,8 +1214,6 @@ int wifi_direct_get_mac_address(char **mac_address);
 /**
  * @brief Gets the state of Wi-Fi Direct service.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] state  The state of Wi-Fi Direct service
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
@@ -1223,6 +1241,7 @@ int wifi_direct_get_state(wifi_direct_state_e *state);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1246,11 +1265,13 @@ int wifi_direct_is_discoverable(bool *discoverable);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
+ * @see wifi_direct_activate()
  * @see wifi_direct_start_discovery()
  * @see wifi_direct_cancel_discovery()
  * @see wifi_direct_is_discoverable()
@@ -1268,6 +1289,7 @@ int wifi_direct_is_listening_only(bool *listen_only);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1288,6 +1310,7 @@ int wifi_direct_get_primary_device_type(wifi_direct_primary_device_type_e *type)
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1307,13 +1330,12 @@ int wifi_direct_get_secondary_device_type(wifi_direct_secondary_device_type_e* t
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  */
 int wifi_direct_activate_pushbutton(void);
@@ -1329,13 +1351,12 @@ int wifi_direct_activate_pushbutton(void);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_get_wps_pin()
  */
@@ -1352,13 +1373,12 @@ int wifi_direct_set_wps_pin(char *pin);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_set_wps_pin()
  */
@@ -1374,6 +1394,7 @@ int wifi_direct_get_wps_pin(char **pin);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1386,8 +1407,6 @@ int wifi_direct_get_supported_wps_mode(int *wps_mode);
 /**
  * @brief Called when you get the supported WPS(Wi-Fi Protected Setup) type repeatedly.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] type  The type of WPS
  * @param[in] user_data  The user data passed from the request function
  * @return  @c true to continue with the next iteration of the loop, \n @c false to break out of the loop
@@ -1407,6 +1426,7 @@ typedef bool(*wifi_direct_supported_wps_type_cb)(wifi_direct_wps_type_e type, vo
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1427,6 +1447,7 @@ int wifi_direct_foreach_supported_wps_types(wifi_direct_supported_wps_type_cb ca
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1447,6 +1468,7 @@ int wifi_direct_get_local_wps_type(wifi_direct_wps_type_e *type);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1467,6 +1489,7 @@ int wifi_direct_set_req_wps_type(wifi_direct_wps_type_e type);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1488,6 +1511,7 @@ int wifi_direct_get_req_wps_type(wifi_direct_wps_type_e *type);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1508,6 +1532,7 @@ int wifi_direct_set_group_owner_intent(int intent);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1528,6 +1553,7 @@ int wifi_direct_get_group_owner_intent(int *intent);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1548,6 +1574,7 @@ int wifi_direct_set_max_clients(int max);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1570,13 +1597,12 @@ int wifi_direct_get_max_clients(int *max);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
- * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitteddfasf
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
+ * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_get_passphrase()
  */
@@ -1593,13 +1619,12 @@ int wifi_direct_set_passphrase(const char *passphrase);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_set_passphrase()
  */
@@ -1616,6 +1641,7 @@ int wifi_direct_get_passphrase(char **passphrase);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1635,6 +1661,7 @@ int wifi_direct_get_operating_channel(int *channel);
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @see wifi_direct_foreach_supported_wps_types()
@@ -1650,6 +1677,7 @@ int wifi_direct_set_autoconnection_mode(bool mode);
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @see wifi_direct_foreach_supported_wps_types()
@@ -1668,13 +1696,12 @@ int wifi_direct_is_autoconnection_mode(bool *mode);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  */
 
@@ -1690,6 +1717,7 @@ int wifi_direct_set_autoconnection_peer(char *mac_address);
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1705,11 +1733,13 @@ int wifi_direct_set_persistent_group_enabled(bool enabled);
  * @since_tizen 2.3
  * @privlevel public
  * @privilege http://tizen.org/privilege/wifidirect
+ * @privilege http://tizen.org/privilege/wifidirect
  * @param[out] enabled  The status of the persistent group: (@c true = enabled, @c false = disabled)
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1723,8 +1753,6 @@ int wifi_direct_is_persistent_group_enabled(bool *enabled);
 /**
  * @brief Called when you get the persistent groups repeatedly.
  * @since_tizen 2.3
- * @privlevel public
- * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] mac_address  The MAC address of the persistent group owner
  * @param[in] ssid  The SSID (Service Set Identifier) of the persistent group owner
  * @param[in] user_data  The user data passed from the request function
@@ -1745,6 +1773,7 @@ typedef bool(*wifi_direct_persistent_group_cb)(const char *mac_address, const ch
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1767,6 +1796,7 @@ int wifi_direct_foreach_persistent_groups(wifi_direct_persistent_group_cb callba
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1790,12 +1820,12 @@ int wifi_direct_remove_persistent_group(char *mac_address, const char *ssid);
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
  * @post wifi_direct_set_service_state_changed_cb() will be invoked.
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_set_service_state_changed_cb()
 */
@@ -1815,11 +1845,11 @@ int wifi_direct_start_service_discovery(char *mac_address,
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
 */
 int wifi_direct_cancel_service_discovery(char *mac_address,
@@ -1842,11 +1872,11 @@ int wifi_direct_cancel_service_discovery(char *mac_address,
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
 */
 int wifi_direct_register_service(wifi_direct_service_type_e service_type,
@@ -1864,11 +1894,11 @@ int wifi_direct_register_service(wifi_direct_service_type_e service_type,
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
 */
 int wifi_direct_deregister_service(unsigned int service_id);
@@ -1884,11 +1914,11 @@ int wifi_direct_deregister_service(unsigned int service_id);
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
 */
 int wifi_direct_init_miracast(bool enable);
@@ -1905,6 +1935,7 @@ int wifi_direct_init_miracast(bool enable);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -1927,11 +1958,11 @@ int wifi_direct_get_peer_info(char *mac_address, wifi_direct_discovered_peer_inf
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate()
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_deinit_display()
  * @see wifi_direct_set_display()
@@ -1949,12 +1980,12 @@ int wifi_direct_init_display(void);
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate()
  * And enable Wi-Fi Display by wifi_direct_init_display().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_init_display()
  * @see wifi_direct_set_display()
@@ -1974,12 +2005,12 @@ int wifi_direct_deinit_display(void);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate()
  * And enable Wi-Fi Display by wifi_direct_init_display().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_init_display()
  * @see wifi_direct_deinit_display()
@@ -1997,12 +2028,12 @@ int wifi_direct_set_display(wifi_direct_display_type_e type, int port, int hdcp)
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate()
  * And enable Wi-Fi Display by wifi_direct_display_init().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_init_display()
  * @see wifi_direct_deinit_display()
@@ -2022,11 +2053,11 @@ int wifi_direct_set_display_availability(bool availability);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
  * @pre Wi-Fi Direct service must be activated by wifi_direct_activate().
- * @see wifi_direct_initialize()
  * @see wifi_direct_activate()
  * @see wifi_direct_foreach_discovered_peers()
  */
@@ -2045,6 +2076,7 @@ int wifi_direct_get_peer_display_type(char *mac_address, wifi_direct_display_typ
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
@@ -2067,6 +2099,7 @@ int wifi_direct_get_peer_display_availability(char *mac_address, bool *availabil
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
@@ -2089,6 +2122,7 @@ int wifi_direct_get_peer_display_hdcp(char *mac_address, int *hdcp);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
@@ -2111,6 +2145,7 @@ int wifi_direct_get_peer_display_port(char *mac_address, int *port);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
@@ -2122,10 +2157,13 @@ int wifi_direct_get_peer_display_throughput(char *mac_address, int *throughput);
 /**
  * @brief Enables / Disables automatic group removal feature when all peers are disconnected.
  * @since_tizen 3.0
+ * @privlevel public
+ * @privilege http://tizen.org/privilege/wifidirect
  * @param[in] enable Enables/Disables Group Removal feature based on the value TRUE/FALSE
  * @return 0 on success, otherwise a negative error value
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -2143,12 +2181,15 @@ int wifi_direct_set_auto_group_removal(bool enable);
 /**
 * @brief Sets the timer which is used to expire the connection session.
 * @since_tizen 3.0
+* @privlevel public
+* @privilege http://tizen.org/privilege/wifidirect
 * @param[in] seconds Set the connection session timer value in second
 * @return 0 on success, otherwise a negative error value
 * @retval #WIFI_DIRECT_ERROR_NONE  Successful
 * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
 * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
 * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
 * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
 * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
 * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
@@ -2160,12 +2201,15 @@ int wifi_direct_set_session_timer(int seconds);
 /**
 * @brief Gets the timer which is used to expire the connection session.
 * @since_tizen 3.0
+* @privlevel public
+* @privilege http://tizen.org/privilege/wifidirect
 * @param[out] seconds  Connection session timer value
 * @return 0 on success, otherwise a negative error value
 * @retval #WIFI_DIRECT_ERROR_NONE  Successful
 * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
 * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
 * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
 * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
 * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
 * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
