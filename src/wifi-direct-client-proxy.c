@@ -612,7 +612,7 @@ int wifi_direct_initialize(void)
 	GError* error = NULL;
 	GVariant *reply = NULL;
 	bool wifi_direct_enable;
-	int state = 0;
+	bool val;
 	int res = 0;
 
 	if (g_client_info.is_registered == TRUE) {
@@ -639,15 +639,15 @@ int wifi_direct_initialize(void)
 		return WIFI_DIRECT_ERROR_OPERATION_FAILED; //LCOV_EXCL_LINE
 	}
 
-	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
-						  "GetState", NULL, &error);
+	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_GROUP_INTERFACE,
+						  "IsGroupOwner", NULL, &error);
 
 	res = __net_wifidirect_gerror_to_enum(error);
 	if (res != WIFI_DIRECT_ERROR_NONE)
 		return res;
 
-	g_variant_get(reply, "(ii)", &res, &state);
-	WDC_LOGD("State = [%d]", state);
+	g_variant_get(reply, "(b)", &val);
+	WDC_LOGD("is group owner [%s]", val ? "YES" : "NO");
 
 	g_client_info.is_registered = TRUE;
 
@@ -2746,23 +2746,14 @@ int wifi_direct_get_mac_address(char **mac_address)
 	return ret;
 }
 
-
 int wifi_direct_get_state(wifi_direct_state_e *state)
 {
 	__WDC_LOG_FUNC_START__;
 
 	CHECK_FEATURE_SUPPORTED(WIFIDIRECT_FEATURE);
 
-	GError* error = NULL;
-	GVariant *reply = NULL;
 	int val = 0;
 	int ret = WIFI_DIRECT_ERROR_NONE;
-
-	if (g_client_info.is_registered == false) {
-		WDC_LOGE("Client is NOT registered");
-		__WDC_LOG_FUNC_END__;
-		return WIFI_DIRECT_ERROR_NOT_INITIALIZED;
-	}
 
 	if (!state) {
 		WDC_LOGE("Invalid Parameter");
@@ -2770,27 +2761,33 @@ int wifi_direct_get_state(wifi_direct_state_e *state)
 		return WIFI_DIRECT_ERROR_INVALID_PARAMETER;
 	}
 
-	reply = wifi_direct_dbus_method_call_sync(WFD_MANAGER_MANAGE_INTERFACE,
-						  "GetState", NULL, &error);
+	ret = vconf_get_int(VCONFKEY_WIFI_DIRECT_STATE, &val);
+	if (ret < 0) {
+		WDC_LOGE("Failed to get vconf value [%s]\n", VCONFKEY_WIFI_DIRECT_STATE);
+		__WDC_LOG_FUNC_END__;
+		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+	}
 
-	ret = __net_wifidirect_gerror_to_enum(error);
-	if (ret != WIFI_DIRECT_ERROR_NONE)
-		return ret;
-
-	g_variant_get(reply, "(ii)", &ret, &val);
-	*state = (wifi_direct_state_e) val;
-	/* for CAPI : there is no WIFI_DIRECT_STATE_GROUP_OWNER type in CAPI */
-	if (*state == WIFI_DIRECT_STATE_GROUP_OWNER)
+	if (val == VCONFKEY_WIFI_DIRECT_ACTIVATED) {
+		*state = WIFI_DIRECT_STATE_ACTIVATED;
+	} else if (val == VCONFKEY_WIFI_DIRECT_DEACTIVATED) {
+		*state= WIFI_DIRECT_STATE_DEACTIVATED;
+	} else if (val == VCONFKEY_WIFI_DIRECT_CONNECTED) {
 		*state = WIFI_DIRECT_STATE_CONNECTED;
-
-	g_variant_unref(reply);
+	} else if (val == VCONFKEY_WIFI_DIRECT_GROUP_OWNER) {
+		*state = WIFI_DIRECT_STATE_GROUP_OWNER;
+	} else if (val == VCONFKEY_WIFI_DIRECT_DISCOVERING) {
+		*state = WIFI_DIRECT_STATE_DISCOVERING;
+	} else {
+		WDC_LOGE("This state cannot be set as wifi_direct vconf state[%d]", val);
+		return WIFI_DIRECT_ERROR_OPERATION_FAILED;
+	}
 
 	WDC_LOGD("State = [%d]", *state);
 	WDC_LOGD("%s() return : [%d]", __func__, ret);
 	__WDC_LOG_FUNC_END__;
 	return ret;
 }
-
 
 int wifi_direct_is_discoverable(bool* discoverable)
 {
