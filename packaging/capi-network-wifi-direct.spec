@@ -49,9 +49,8 @@ chmod 644 %{SOURCE0}
 %build
 
 export CFLAGS="$CFLAGS -DTIZEN_DEBUG_ENABLE"
-export CXXFLAGS="$CXXFLAGS -DTIZEN_DEBUG_ENABLE -fprofile-arcs -ftest-coverage"
+export CXXFLAGS="$CXXFLAGS -DTIZEN_DEBUG_ENABLE"
 export FFLAGS="$FFLAGS -DTIZEN_DEBUG_ENABLE"
-export LDFLAGS="-lgcov"
 
 MAJORVER=`echo %{version} | awk 'BEGIN {FS="."}{print $1}'`
 

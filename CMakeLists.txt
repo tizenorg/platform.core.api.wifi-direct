@@ -9,7 +9,7 @@ SET(INCLUDEDIR "\${prefix}/include")
 
 SET(dependents "capi-base-common")
 SET(pc_dependents "capi-base-common")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall -Werror -fprofile-arcs -ftest-coverage")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall -Werror")
 
 ADD_SUBDIRECTORY(src)
 #ADD_SUBDIRECTORY(test)
