@@ -4107,7 +4107,7 @@ int wifi_direct_set_session_timer(int seconds)
 					  &error);
 
 	ret = __net_wifidirect_gerror_to_enum(error);
-	if(ret == WIFI_DIRECT_ERROR_NONE) {
+	if (ret == WIFI_DIRECT_ERROR_NONE) {
 		g_variant_get(reply, "(i)", &ret);
 		g_variant_unref(reply);
 	}
