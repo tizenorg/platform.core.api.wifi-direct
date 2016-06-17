@@ -457,6 +457,45 @@ int select_peer(struct appdata* ad)
 	return 1;
 }
 
+int select_connected_peer(struct appdata* ad)
+{
+	wifi_direct_connected_peer_info_s* list;
+	int target = -1;
+	int i, j;
+
+	if (ad == NULL)
+		return 0;
+
+	list = ad->connected_peer_list;
+
+	for (i = 0; i < ad->connected_peer_count; i++) {
+		if (list[i].service_count == 0) {
+			printf("index [%d] MAC [%s] SSID[%s] P2P_Supported [%d]\n", i, list[i].mac_address, list[i].device_name, list[i].p2p_supported);
+		} else {
+			char services[256] = {0,};
+			unsigned int len = 0;
+			printf("Service Count = [%d][%p]\n", list[i].service_count, list[i].service_list);
+			for (j = 0; j < list[i].service_count && list[i].service_list != NULL; j++) {
+				printf("Service[%p]=%s\n", list[i].service_list[j], list[i].service_list[j]);
+				snprintf(services + len, 256-len, " %s", list[i].service_list[j]);
+				len = len + strlen(list[i].service_list[j]) + 1;
+			}
+			printf("index [%d] MAC [%s] SSID[%s] Services=[%s]\n", i, list[i].mac_address, list[i].device_name, services);
+		}
+	}
+
+	printf("input peer index:\n");
+	if (scanf(" %3d", &target) < 1)
+		return -1;
+
+	if (target < 0 || target > ad->connected_peer_count) {
+		printf("Wrong contact index [%d]\n", target);
+		return -1;
+	} else
+		ad->selected_peer_index = target;
+
+	return 1;
+}
 
 void print_peers_connected(struct appdata* ad)
 {
@@ -1303,9 +1342,9 @@ void process_input(const char *input, gpointer user_data)
 
 	case CMD_DISCONNECT:
 		if (ad != NULL) {
-			if (select_peer(ad)) {
+			if (select_connected_peer(ad)) {
 				int i = ad->selected_peer_index;
-				wifi_direct_discovered_peer_info_s* list = ad->peer_list;
+				wifi_direct_connected_peer_info_s* list = ad->connected_peer_list;
 
 				result = wifi_direct_disconnect(list[i].mac_address);
 
