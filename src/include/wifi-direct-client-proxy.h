@@ -63,6 +63,7 @@ typedef struct {
 	wifi_direct_connection_state_changed_cb connection_cb;
 	wifi_direct_client_ip_address_assigned_cb ip_assigned_cb;
 	wifi_direct_peer_found_cb peer_found_cb;
+	wifi_direct_state_changed_cb state_cb;
 
 	void *user_data_for_cb_activation;
 	void *user_data_for_cb_discover;
@@ -70,6 +71,7 @@ typedef struct {
 	void *user_data_for_cb_ip_assigned;
 	void *user_data_for_cb_peer_found;
 	void *user_data_for_cb_device_name;
+	void *user_data_for_cb_state;
 
 #ifdef TIZEN_FEATURE_SERVICE_DISCOVERY
 	wifi_direct_service_state_changed_cb service_cb;

@@ -127,12 +127,14 @@ enum {
 	CMD_SET_CONNECTION_CB,
 	CMD_SET_PEER_FOUND_CB,
 	CMD_SET_DEVICE_NAME_CB,
+	CMD_SET_STATE_CB,
 	CMD_UNSET_ACTIVATION_CB,
 	CMD_UNSET_DISCOVER_CB,
 	CMD_UNSET_SERVICE_CB,
 	CMD_UNSET_CONNECTION_CB,
 	CMD_UNSET_PEER_FOUND_CB,
 	CMD_UNSET_DEVICE_NAME_CB,
+	CMD_UNSET_STATE_CB,
 	CMD_GET_NETWORK_IF_NAME,
 	CMD_GET_SUBNET_MASK,
 	CMD_GET_GATEWAY_ADDR,
@@ -238,10 +240,12 @@ menu_str_t g_menu_str[] = {
 		{ CMD_SET_CONNECTION_CB, "CMD_SET_CONNECTION_CB" },
 		{ CMD_SET_PEER_FOUND_CB, "CMD_SET_PEER_FOUND_CB" },
 		{ CMD_SET_DEVICE_NAME_CB, "CMD_SET_DEVICE_NAME_CB"},
+		{ CMD_SET_STATE_CB, "CMD_SET_STATE_CB"},
 		{ CMD_UNSET_ACTIVATION_CB, "CMD_UNSET_ACTIVATION_CB" },
 		{ CMD_UNSET_DISCOVER_CB, "CMD_UNSET_DISCOVER_CB" },
 		{ CMD_UNSET_CONNECTION_CB, "CMD_UNSET_CONNECTION_CB" },
 		{ CMD_UNSET_PEER_FOUND_CB, "CMD_UNSET_PEER_FOUND_CB" },
+		{ CMD_UNSET_STATE_CB, "CMD_UNSET_STATE_CB" },
 		{ CMD_GET_NETWORK_IF_NAME, "CMD_GET_NETWORK_IF_NAME" },
 		{ CMD_GET_SUBNET_MASK, "CMD_GET_SUBNET_MASK" },
 		{ CMD_GET_GATEWAY_ADDR, "CMD_GET_GATEWAY_ADDR" },
@@ -1087,6 +1091,13 @@ bool _cb_foreach_supported_wps_impl(wifi_direct_wps_type_e type, void* user_data
 	return true; /* continue with the next iteration of the loop */
 }
 
+void _cb_state_changed(wifi_direct_state_e state,
+		void *user_data)
+{
+	printf("State Changed [%s]\n", print_link_state(state));
+	return;
+}
+
 int init_wfd_client(struct appdata *ad)
 {
 	int ret;
@@ -1111,6 +1122,9 @@ int init_wfd_client(struct appdata *ad)
 
 	ret = wifi_direct_set_peer_found_cb(_cb_peer_found, (void*)ad);
 	printf("wifi_direct_set_peer_found_cb() result=[%d]\n", ret);
+
+	ret = wifi_direct_set_state_changed_cb(_cb_state_changed, (void*)ad);
+	printf("wifi_direct_set_state_changed_cb() result=[%d]\n", ret);
 
 	return ret;
 }
@@ -1204,7 +1218,18 @@ void process_input(const char *input, gpointer user_data)
 		printf("wifi_direct_unset_peer_found_cb() result=[%d]\n", result);
 	}
 	break;
-
+	case CMD_SET_STATE_CB:
+	{
+		result = wifi_direct_set_state_changed_cb(_cb_state_changed, (void*)ad);
+		printf("wifi_direct_set_state_changed_cb() result=[%d]\n", result);
+	}
+	break;
+	case CMD_UNSET_STATE_CB:
+	{
+		result = wifi_direct_unset_state_changed_cb();
+		printf("wifi_direct_unset_state_changed_cb() result=[%d]\n", result);
+	}
+	break;
 	case CMD_DEINITIALIZE:
 		result = wifi_direct_deinitialize();
 		printf("wifi_direct_deinitialize() result=[%d]\n", result);
