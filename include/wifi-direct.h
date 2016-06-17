@@ -1219,13 +1219,9 @@ int wifi_direct_get_mac_address(char **mac_address);
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
- * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
- * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
  * @retval #WIFI_DIRECT_ERROR_RESOURCE_BUSY  Device or resource busy
- * @pre Wi-Fi Direct service must be initialized by wifi_direct_initialize().
- * @see wifi_direct_initialize()
  */
 int wifi_direct_get_state(wifi_direct_state_e *state);
 
