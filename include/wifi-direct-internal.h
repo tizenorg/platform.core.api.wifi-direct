@@ -37,6 +37,7 @@ extern "C" {
  * @retval #WIFI_DIRECT_ERROR_NONE  Successful
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
@@ -55,6 +56,7 @@ int wifi_direct_reject_connection(char *mac_address);
  * @retval #WIFI_DIRECT_ERROR_INVALID_PARAMETER  Invalid parameter
  * @retval #WIFI_DIRECT_ERROR_OPERATION_FAILED  Operation failed
  * @retval #WIFI_DIRECT_ERROR_COMMUNICATION_FAILED  Communication failed
+ * @retval #WIFI_DIRECT_ERROR_PERMISSION_DENIED  Permission denied
  * @retval #WIFI_DIRECT_ERROR_NOT_PERMITTED  Operation not permitted
  * @retval #WIFI_DIRECT_ERROR_NOT_SUPPORTED  Not supported
  * @retval #WIFI_DIRECT_ERROR_NOT_INITIALIZED  Not initialized
