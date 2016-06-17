@@ -90,8 +90,8 @@ typedef enum {
 	WIFI_DIRECT_ONLY_LISTEN_STARTED,  /**< Only listen started */
 	WIFI_DIRECT_DISCOVERY_STARTED,  /**< Discovery started */
 	WIFI_DIRECT_DISCOVERY_FOUND,  /**< A remote peer is found */
-	WIFI_DIRECT_DISCOVERY_LOST,  /**< A remote peer is lost */
 	WIFI_DIRECT_DISCOVERY_FINISHED,  /**< Discovery finished */
+	WIFI_DIRECT_DISCOVERY_LOST,  /**< A remote peer is lost */
 } wifi_direct_discovery_state_e;
 
 /**
