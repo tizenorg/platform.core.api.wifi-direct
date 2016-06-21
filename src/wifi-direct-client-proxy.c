@@ -142,6 +142,7 @@ static int __net_wifidirect_gerror_to_enum(GError* error)
 	return ret;
 }
 
+//LCOV_EXCL_START
 void __wfd_vconf_state_changed_cb(keynode_t *key, void *data)
 {
 	__WDC_LOG_FUNC_START__;
@@ -168,7 +169,7 @@ void __wfd_vconf_state_changed_cb(keynode_t *key, void *data)
 	} else if (state == VCONFKEY_WIFI_DIRECT_CONNECTED) {
 		state = WIFI_DIRECT_STATE_CONNECTED;
 	} else if (state == VCONFKEY_WIFI_DIRECT_GROUP_OWNER) {
-		state = WIFI_DIRECT_STATE_GROUP_OWNER;
+		state = WIFI_DIRECT_STATE_CONNECTED;
 	} else if (state == VCONFKEY_WIFI_DIRECT_DISCOVERING) {
 		state = WIFI_DIRECT_STATE_DISCOVERING;
 	} else {
@@ -182,6 +183,7 @@ void __wfd_vconf_state_changed_cb(keynode_t *key, void *data)
 	__WDC_LOG_FUNC_END__;
 	return;
 }
+//LCOV_EXCL_STOP
 
 /* Manage */
 void wifi_direct_process_manage_activation(GDBusConnection *connection,
@@ -2869,7 +2871,7 @@ int wifi_direct_get_state(wifi_direct_state_e *state)
 	} else if (val == VCONFKEY_WIFI_DIRECT_CONNECTED) {
 		*state = WIFI_DIRECT_STATE_CONNECTED;
 	} else if (val == VCONFKEY_WIFI_DIRECT_GROUP_OWNER) {
-		*state = WIFI_DIRECT_STATE_GROUP_OWNER;
+		*state = WIFI_DIRECT_STATE_CONNECTED;
 	} else if (val == VCONFKEY_WIFI_DIRECT_DISCOVERING) {
 		*state = WIFI_DIRECT_STATE_DISCOVERING;
 	} else {
