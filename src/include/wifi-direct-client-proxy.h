@@ -25,22 +25,23 @@
 #include <stdbool.h>
 #include "wifi-direct.h"
 
-#define SOCK_FD_MIN 3
-#define WIFI_DIRECT_WPA_LEN 64
 #define MACSTR_LEN 18
 #define MACADDR_LEN 6
 #define IPADDR_LEN 4
 #define IPSTR_LEN 16
-#define WFD_SOCK_FILE_PATH "/tmp/wfd_client_socket"
 
-#define WIFIDIRECT_FEATURE						"http://tizen.org/feature/network.wifi.direct"
-#define WIFIDIRECT_DISPLAY_FEATURE				"http://tizen.org/feature/network.wifi.direct.display"
-#define WIFIDIRECT_SERVICE_DISCOVERY_FEATURE	"http://tizen.org/feature/network.wifi.direct.service_discovery"
+#define WIFIDIRECT_FEATURE\
+	"http://tizen.org/feature/network.wifi.direct"
+#define WIFIDIRECT_DISPLAY_FEATURE\
+	"http://tizen.org/feature/network.wifi.direct.display"
+#define WIFIDIRECT_SERVICE_DISCOVERY_FEATURE\
+	"http://tizen.org/feature/network.wifi.direct.service_discovery"
 
 #define CHECK_FEATURE_SUPPORTED(feature_name)\
 	do {\
 		bool feature_supported = FALSE;\
-		if (!system_info_get_platform_bool(feature_name, &feature_supported)) {\
+		if (!system_info_get_platform_bool(feature_name,\
+						   &feature_supported)) {\
 			if (feature_supported == FALSE) {\
 				LOGE("%s feature is disabled", feature_name);\
 				return WIFI_DIRECT_ERROR_NOT_SUPPORTED;\
@@ -53,24 +54,23 @@
 
 typedef struct {
 	bool is_registered;
-	int client_id;
-	int sync_sockfd;
-	int async_sockfd;
-	int g_client_info;
-	int g_source_id;
-	wifi_direct_device_state_changed_cb activation_cb;
-	wifi_direct_discovery_state_chagned_cb discover_cb;
-	wifi_direct_connection_state_changed_cb connection_cb;
-	wifi_direct_client_ip_address_assigned_cb ip_assigned_cb;
-	wifi_direct_peer_found_cb peer_found_cb;
-	wifi_direct_state_changed_cb state_cb;
 
+	wifi_direct_device_state_changed_cb activation_cb;
 	void *user_data_for_cb_activation;
+
+	wifi_direct_discovery_state_chagned_cb discover_cb;
 	void *user_data_for_cb_discover;
+
+	wifi_direct_connection_state_changed_cb connection_cb;
 	void *user_data_for_cb_connection;
+
+	wifi_direct_client_ip_address_assigned_cb ip_assigned_cb;
 	void *user_data_for_cb_ip_assigned;
+
+	wifi_direct_peer_found_cb peer_found_cb;
 	void *user_data_for_cb_peer_found;
-	void *user_data_for_cb_device_name;
+
+	wifi_direct_state_changed_cb state_cb;
 	void *user_data_for_cb_state;
 
 #ifdef TIZEN_FEATURE_SERVICE_DISCOVERY
@@ -78,7 +78,6 @@ typedef struct {
 	void *user_data_for_cb_service;
 #endif /* TIZEN_FEATURE_SERVICE_DISCOVERY */
 
-	pthread_mutex_t mutex;
 } wifi_direct_client_info_s;
 
 extern char *wfd_debug_print(char *file, int line, char *format, ...);

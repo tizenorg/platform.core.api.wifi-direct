@@ -47,15 +47,19 @@ extern "C" {
 
 #define WFD_MANAGER_QUARK (g_quark_from_string("wifi-direct-manager"))
 
-#define wifi_direct_dbus_method_call_sync(interface_name, method, params, error) \
-	wifi_direct_dbus_method_call_sync_debug(interface_name, method, params, error, __func__)
+#define wifi_direct_dbus_method_call_sync(interface_name, method, params,\
+					  error)\
+	wifi_direct_dbus_method_call_sync_debug(interface_name, method, params,\
+						error, __func__)
 
-#define DBUS_DEBUG_VARIANT(parameters) \
+#define DBUS_DEBUG_VARIANT(parameters)\
 	do {\
 		gchar *parameters_debug_str = NULL;\
 		if (parameters)\
-			parameters_debug_str = g_variant_print(parameters, TRUE);\
-		WDC_LOGD("signal params [%s]", parameters_debug_str ? parameters_debug_str : "NULL");\
+			parameters_debug_str = g_variant_print(parameters,\
+							       TRUE);\
+		WDC_LOGD("signal params [%s]",\
+			 parameters_debug_str ? parameters_debug_str : "NULL");\
 		g_free(parameters_debug_str);\
 	} while (0)
 

@@ -34,7 +34,7 @@ typedef struct {
 	guint signal_subscribe_id;
 } gdbus_connection_data;
 
-static gdbus_connection_data gdbus_conn = {NULL, 0};
+static __thread gdbus_connection_data gdbus_conn = {NULL, 0};
 
 static struct {
 	const char *interface;
@@ -128,9 +128,12 @@ static struct {
 };
 
 static void _wifi_direct_dbus_signal_cb(GDBusConnection *connection,
-					const gchar *sender, const gchar *object_path,
-					const gchar *interface, const gchar *signal,
-					GVariant *parameters, gpointer user_data)
+					const gchar *sender,
+					const gchar *object_path,
+					const gchar *interface,
+					const gchar *signal,
+					GVariant *parameters,
+					gpointer user_data)
 {
 	int i = 0;
 
@@ -139,9 +142,12 @@ static void _wifi_direct_dbus_signal_cb(GDBusConnection *connection,
 
 	for (i = 0; wifi_direct_dbus_signal_map[i].member != NULL; i++) {
 		if (!g_strcmp0(signal, wifi_direct_dbus_signal_map[i].member) &&
-		    !g_strcmp0(interface, wifi_direct_dbus_signal_map[i].interface) &&
+		    !g_strcmp0(interface,
+			       wifi_direct_dbus_signal_map[i].interface) &&
 		    wifi_direct_dbus_signal_map[i].function != NULL) {
-			wifi_direct_dbus_signal_map[i].function(connection, object_path, parameters);
+			wifi_direct_dbus_signal_map[i].function(connection,
+								object_path,
+								parameters);
 			break;
 		}
 	}
@@ -171,7 +177,8 @@ GVariant *wifi_direct_dbus_method_call_sync_debug(const char* interface_name,
 					    params, /* GVariant *params */
 					    NULL, /* reply_type */
 					    G_DBUS_CALL_FLAGS_NONE, /* flags */
-					    WIFI_DIRECT_DBUS_REPLY_TIMEOUT_SYNC, /* timeout */
+					    WIFI_DIRECT_DBUS_REPLY_TIMEOUT_SYNC,
+					    /* timeout */
 					    NULL, /* cancellable */
 					    error); /* error */
 	DBUS_DEBUG_VARIANT(reply);
@@ -181,29 +188,34 @@ GVariant *wifi_direct_dbus_method_call_sync_debug(const char* interface_name,
 gboolean wifi_direct_dbus_init(void)
 {
 	GError *Error = NULL;
-	GDBusConnection *connection = NULL;
 
-	connection = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, &Error);
-	if (connection == NULL) {
+	if (gdbus_conn.signal_subscribe_id > 0) {
+		WDC_LOGI("GDbusConnection already initialized");
+		return TRUE;
+	}
+
+	gdbus_conn.connection = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, &Error);
+	if (gdbus_conn.connection == NULL) {
 		WDC_LOGE("Failed to get connection, Error[%s]", Error->message);
 		g_error_free(Error); //LCOV_EXCL_LINE
 		return FALSE; //LCOV_EXCL_LINE
 	}
 
-	gdbus_conn.connection = connection;
-
 	/* subscribe signal handler */
-	gdbus_conn.signal_subscribe_id = g_dbus_connection_signal_subscribe(connection,
-							WFD_MANAGER_SERVICE, /* bus name */
-							NULL, /* interface */
-							NULL, /* member */
-							WFD_MANAGER_PATH, /* object_path */
-							NULL, /* arg0 */
-							G_DBUS_SIGNAL_FLAGS_NONE,
-							_wifi_direct_dbus_signal_cb,
-							NULL,
-							NULL);
-	WDC_LOGI("Subscribed dbus signals [%d]", gdbus_conn.signal_subscribe_id);
+	gdbus_conn.signal_subscribe_id =
+		g_dbus_connection_signal_subscribe(gdbus_conn.connection,
+						   WFD_MANAGER_SERVICE, /* bus name */
+						   NULL, /* interface */
+						   NULL, /* member */
+						   WFD_MANAGER_PATH, /* object_path */
+						   NULL, /* arg0 */
+						   G_DBUS_SIGNAL_FLAGS_NONE,
+						   _wifi_direct_dbus_signal_cb,
+						   NULL,
+						   NULL);
+	WDC_LOGI("Subscribed dbus signals [%d]",
+		 gdbus_conn.signal_subscribe_id);
+
 	return TRUE;
 }
 
@@ -213,7 +225,8 @@ void wifi_direct_dbus_deinit(void)
 		return;
 
 	/* unsubscribe signal handler */
-	g_dbus_connection_signal_unsubscribe(gdbus_conn.connection, gdbus_conn.signal_subscribe_id);
+	g_dbus_connection_signal_unsubscribe(gdbus_conn.connection,
+					     gdbus_conn.signal_subscribe_id);
 	gdbus_conn.signal_subscribe_id = 0;
 
 	/* unref gdbus connection */
