@@ -319,8 +319,10 @@ typedef struct {
  * @param[in] error_code  The error code
  * @param[in] discovery_state  The discovery state
  * @param[in] user_data  The user data passed from the callback registration function
- * @pre Either wifi_direct_start_discovery() or wifi_direct_cancel_discovery() will invoke this callback
- * if you register this callback using wifi_direct_set_discovery_state_changed_cb().
+ * @pre Either wifi_direct_start_discovery() or wifi_direct_cancel_discovery()
+ * will invoke this callback in the thread-default main context of the thread
+ * from which you registered this callback using
+ * wifi_direct_set_discovery_state_changed_cb().
  * @see wifi_direct_start_discovery()
  * @see wifi_direct_cancel_discovery()
  * @see wifi_direct_set_discovery_state_changed_cb()
@@ -341,12 +343,13 @@ typedef void (*wifi_direct_discovery_state_chagned_cb) (int error_code,
  * @param[in] discovery_state  The discovery state
  * @param[in] mac_address  The MAC address of found peer
  * @param[in] user_data  The user data passed from the callback registration function
- * @pre Either wifi_direct_start_discovery() or wifi_direct_cancel_discovery() will invoke this callback
- * if you register this callback using wifi_direct_set_discovery_state_changed_cb().
+ * @pre Either wifi_direct_start_discovery() or wifi_direct_cancel_discovery()
+ * will invoke this callback in the thread-default main context of the thread
+ * from which you registered this callback using wifi_direct_set_peer_found_cb()
  * @see wifi_direct_start_discovery()
  * @see wifi_direct_cancel_discovery()
- * @see wifi_direct_set_discovery_state_changed_cb()
- * @see wifi_direct_unset_discovery_state_changed_cb()
+ * @see wifi_direct_set_peer_found_cb()
+ * @see wifi_direct_unset_peer_found_cb()
  */
 typedef void (*wifi_direct_peer_found_cb) (int error_code,
 						wifi_direct_discovery_state_e discovery_state,
@@ -363,8 +366,9 @@ typedef void (*wifi_direct_peer_found_cb) (int error_code,
  * @param[in] error_code  The error code
  * @param[in] device_state  The device state
  * @param[in] user_data  The user data passed from the callback registration function
- * @pre Either wifi_direct_activate() or wifi_direct_deactivate() will invoke this callback
- * if you register this callback using wifi_direct_set_device_state_changed_cb().
+ * @pre Either wifi_direct_activate() or wifi_direct_deactivate() will invoke
+ * this callback in the thread-default main context of the thread from which you
+ * registered this callback using wifi_direct_set_device_state_changed_cb().
  * @see wifi_direct_activate()
  * @see wifi_direct_deactivate()
  * @see wifi_direct_set_device_state_changed_cb()
@@ -386,7 +390,10 @@ typedef void (*wifi_direct_device_state_changed_cb) (int error_code,
  * @param[in] connection_state  The connection state
  * @param[in] mac_address  The MAC address of the connection peer
  * @param[in] user_data  The user data passed from the callback registration function
- * @pre wifi_direct_create_group(), wifi_direct_destroy_group(), wifi_direct_connect(), wifi_direct_disconnect() or wifi_direct_disconnect_all() will invoke this callback
+ * @pre wifi_direct_create_group(), wifi_direct_destroy_group(),
+ * wifi_direct_connect(), wifi_direct_disconnect() or
+ * wifi_direct_disconnect_all() will invoke this callback in the thread-default
+ * main context of the thread from which you registered this callback using
  * if you register this callback using wifi_direct_set_connection_state_changed_cb().
  * @see wifi_direct_connect()
  * @see wifi_direct_disconnect()
@@ -410,6 +417,9 @@ typedef void (*wifi_direct_connection_state_changed_cb) (int error_code,
  * @param[in] ip_address  The IP address of connection peer
  * @param[in] interface_address  The interface address of connection peer
  * @param[in] user_data  The user data passed from the callback registration function
+ * @pre This callback will be invoked in the thread-default main context of the
+ * thread from which you registered this callback using
+ * wifi_direct_set_client_ip_address_assigned_cb().
  * @see wifi_direct_set_client_ip_address_assigned_cb()
  * @see wifi_direct_unset_client_ip_address_assigned_cb()
  */
@@ -430,8 +440,10 @@ typedef void (*wifi_direct_client_ip_address_assigned_cb) (const char *mac_addre
  * @param[in] service_type  Specifies the types of service
  * @param[in] response_data  Received response
  * @param[in] user_data  User can transfer the user specific data in callback
- * @pre Either wifi_direct_start_service_discovery() or wifi_direct_cancel_service_discovery() will invoke this callback
- * if you register this callback using wifi_direct_set_service_state_changed_cb().
+ * @pre Either wifi_direct_start_service_discovery() or
+ * wifi_direct_cancel_service_discovery() will invoke this callback in the
+ * thread-default main context of thethread from which you registered this
+ * callback using wifi_direct_set_service_state_changed_cb().
  * @see wifi_direct_start_discovery()
  * @see wifi_direct_cancel_discovery()
  * @see wifi_direct_set_discovery_state_changed_cb()

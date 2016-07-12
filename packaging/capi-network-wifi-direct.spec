@@ -1,13 +1,15 @@
 Name:       capi-network-wifi-direct
 Summary:    Network WiFi-Direct Library
-Version:    1.2.68
+Version:    1.2.69
 Release:    1
 Group:      Network & Connectivity/API
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
+BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(gio-2.0)
+BuildRequires:  pkgconfig(gthread-2.0)
 BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(vconf)
 BuildRequires:  pkgconfig(capi-base-common)

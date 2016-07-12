@@ -68,31 +68,7 @@
  *  Global Variables
  *****************************************************************************/
 
-wifi_direct_client_info_s g_client_info = {
-	.is_registered = FALSE,
-	.client_id = -1,
-	.sync_sockfd = -1,
-	.async_sockfd = -1,
-	.activation_cb = NULL,
-	.discover_cb = NULL,
-	.connection_cb = NULL,
-	.ip_assigned_cb = NULL,
-	.peer_found_cb = NULL,
-	.state_cb = NULL,
-	.user_data_for_cb_activation = NULL,
-	.user_data_for_cb_discover = NULL,
-	.user_data_for_cb_connection = NULL,
-	.user_data_for_cb_ip_assigned = NULL,
-	.user_data_for_cb_peer_found = NULL,
-	.user_data_for_cb_device_name = NULL,
-	.user_data_for_cb_state = NULL,
-#ifdef TIZEN_FEATURE_SERVICE_DISCOVERY
-	.service_cb = NULL,
-	.user_data_for_cb_service = NULL,
-#endif /* TIZEN_FEATURE_SERVICE_DISCOVERY */
-
-	.mutex = PTHREAD_MUTEX_INITIALIZER
-};
+static __thread wifi_direct_client_info_s g_client_info = {0, };
 
 /*****************************************************************************
  *  Local Functions Definition
@@ -157,7 +133,8 @@ void __wfd_vconf_state_changed_cb(keynode_t *key, void *data)
 
 	res = vconf_get_int(VCONFKEY_WIFI_DIRECT_STATE, &state);
 	if (res < 0) {
-		WDC_LOGE("Failed to get vconf value [%s]\n", VCONFKEY_WIFI_DIRECT_STATE);
+		WDC_LOGE("Failed to get vconf value [%s]\n",
+			 VCONFKEY_WIFI_DIRECT_STATE);
 		__WDC_LOG_FUNC_END__;
 		return;
 	}
@@ -699,17 +676,19 @@ int wifi_direct_initialize(void)
 
 	/* Initialize callbacks */
 	g_client_info.activation_cb = NULL;
+	g_client_info.user_data_for_cb_activation = NULL;
+
 	g_client_info.discover_cb = NULL;
+	g_client_info.user_data_for_cb_discover = NULL;
+
 	g_client_info.connection_cb = NULL;
+	g_client_info.user_data_for_cb_connection = NULL;
+
 	g_client_info.ip_assigned_cb = NULL;
+	g_client_info.user_data_for_cb_ip_assigned = NULL;
 
 	g_client_info.peer_found_cb = NULL;
-	g_client_info.user_data_for_cb_activation = NULL;
-	g_client_info.user_data_for_cb_discover = NULL;
-	g_client_info.user_data_for_cb_connection = NULL;
-	g_client_info.user_data_for_cb_ip_assigned = NULL;
 	g_client_info.user_data_for_cb_peer_found = NULL;
-	g_client_info.user_data_for_cb_device_name = NULL;
 
 #ifdef TIZEN_FEATURE_SERVICE_DISCOVERY
 	g_client_info.service_cb = NULL;
@@ -735,14 +714,18 @@ int wifi_direct_deinitialize(void)
 	wifi_direct_dbus_deinit();
 
 	g_client_info.activation_cb = NULL;
-	g_client_info.discover_cb = NULL;
-	g_client_info.connection_cb = NULL;
-	g_client_info.ip_assigned_cb = NULL;
-	g_client_info.peer_found_cb = NULL;
 	g_client_info.user_data_for_cb_activation = NULL;
+
+	g_client_info.discover_cb = NULL;
 	g_client_info.user_data_for_cb_discover = NULL;
+
+	g_client_info.connection_cb = NULL;
 	g_client_info.user_data_for_cb_connection = NULL;
+
+	g_client_info.ip_assigned_cb = NULL;
 	g_client_info.user_data_for_cb_ip_assigned = NULL;
+
+	g_client_info.peer_found_cb = NULL;
 	g_client_info.user_data_for_cb_peer_found = NULL;
 
 #ifdef TIZEN_FEATURE_SERVICE_DISCOVERY
